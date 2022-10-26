@@ -3,6 +3,7 @@ package library
 import (
 	"errors"
 	"fmt"
+	"github.com/jinzhu/now"
 	"log"
 	"math"
 	"reflect"
@@ -472,4 +473,12 @@ func Contains(elems []string, elem string) bool {
 		}
 	}
 	return false
+}
+
+func NextMonth(t time.Time) time.Time {
+
+	myTime := now.New(t)
+	myT := myTime.EndOfMonth()
+	myTT := myT.Add(48 * time.Hour)
+	return myTT
 }

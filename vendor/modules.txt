@@ -19,6 +19,9 @@ github.com/gorilla/securecookie
 # github.com/gorilla/sessions v1.2.1
 ## explicit
 github.com/gorilla/sessions
+# github.com/jinzhu/now v1.1.5
+## explicit; go 1.12
+github.com/jinzhu/now
 # github.com/labstack/echo-contrib v0.13.0
 ## explicit; go 1.17
 github.com/labstack/echo-contrib/session
