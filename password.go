@@ -1,12 +1,11 @@
 package library
 
 import (
-	"bitbucket.org/dnda-tech/api-and-billing/app/logger"
 	"crypto/rand"
 	"fmt"
 	"github.com/Pallinder/go-randomdata"
-	"github.com/logrusorgru/aurora"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"math/big"
 	"os"
 	"regexp"
@@ -181,7 +180,7 @@ func PasswordMatch(hash []byte, password []byte) bool {
 	err := bcrypt.CompareHashAndPassword(hash, password)
 	if err != nil {
 
-		logger.Error("got error checking password matches hash %s password %s got error %s", hash, password, aurora.Red(err))
+		log.Printf("got error checking password matches hash %s password %s got error %s", hash, password, err)
 		return false
 	}
 
@@ -202,7 +201,7 @@ func Hash(password string) (string, error) {
 
 	if err != nil {
 
-		logger.Error("got error hasing password %s ", aurora.Red(err))
+		log.Printf("got error hasing password %s ", err.Error())
 		return "", err
 	}
 

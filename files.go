@@ -1,7 +1,6 @@
 package library
 
 import (
-	"bitbucket.org/dnda-tech/api-and-billing/app/logger"
 	"fmt"
 	"github.com/go-cmd/cmd"
 	"path"
@@ -37,17 +36,13 @@ func NumberOfLines(file string) int {
 	var response string
 
 	// gets each line of STDOUT from Cmd
-	for i, line := range status.Stdout {
-		logger.Info("got index %d is %s", i, line)
+	for _, line := range status.Stdout {
 		response = line
 	}
 
 	words = strings.Fields(response)
 
 	count, _ := strconv.Atoi(words[0])
-
-	logger.Info("NumberOfLines checking number of files for file %s, got %d lines from %s", file, count, words[0])
-
 	return count
 }
 

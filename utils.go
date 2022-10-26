@@ -1,12 +1,9 @@
 package library
 
 import (
-	"bitbucket.org/dnda-tech/api-and-billing/app/constants"
-	"bitbucket.org/dnda-tech/api-and-billing/app/logger"
 	"errors"
 	"fmt"
-	"github.com/jinzhu/now"
-	"github.com/logrusorgru/aurora"
+	"log"
 	"math"
 	"reflect"
 	"regexp"
@@ -23,7 +20,7 @@ func GetString(payload map[string]interface{}, name string, defaults string) (st
 
 	if payload[name] == nil {
 
-		return defaults, errors.New(fmt.Sprintf(constants.ValueIsNotSet, name))
+		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 	}
 
 	v := reflect.ValueOf(payload[name])
@@ -59,7 +56,7 @@ func GetFloat(payload map[string]interface{}, name string, defaults float64) (fl
 
 	if payload[name] == nil {
 
-		return defaults, errors.New(fmt.Sprintf(constants.ValueIsNotSet, name))
+		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 	}
 
 	v := reflect.ValueOf(payload[name])
@@ -67,7 +64,7 @@ func GetFloat(payload map[string]interface{}, name string, defaults float64) (fl
 	switch v.Kind() {
 
 	case reflect.Invalid:
-		return defaults, errors.New(fmt.Sprintf(constants.ValueIsNotSet, name))
+		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return float64(v.Int()), nil
@@ -80,7 +77,7 @@ func GetFloat(payload map[string]interface{}, name string, defaults float64) (fl
 	// ...floating-point and complex cases omitted for brevity...
 	case reflect.Bool:
 		//return strconv.FormatBool(v.Bool())
-		return defaults, errors.New(fmt.Sprintf(constants.ValueIsNotSet, name))
+		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 
 	case reflect.String:
 		val, err := strconv.ParseFloat(v.String(), 64)
@@ -94,7 +91,7 @@ func GetFloat(payload map[string]interface{}, name string, defaults float64) (fl
 
 	default: // reflect.Array, reflect.Struct, reflect.Interface
 		//return v.Type().String() + " value"
-		return defaults, errors.New(fmt.Sprintf(constants.ValueIsNotSet, name))
+		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 	}
 
 }
@@ -103,7 +100,7 @@ func GetInt64(payload map[string]interface{}, name string, defaults int64) (int6
 
 	if payload[name] == nil {
 
-		return defaults, errors.New(fmt.Sprintf(constants.ValueIsNotSet, name))
+		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 	}
 
 	v := reflect.ValueOf(payload[name])
@@ -147,7 +144,7 @@ func GetBool(payload map[string]interface{}, name string, defaults bool) (bool, 
 
 	if payload[name] == nil {
 
-		return defaults, fmt.Errorf(constants.ValueIsNotSet, name)
+		return defaults, fmt.Errorf("value %s not set", name)
 	}
 
 	v := reflect.ValueOf(payload[name])
@@ -242,7 +239,7 @@ func CombinedDateTime(dateDate time.Time, timeString string) time.Time {
 
 	if err != nil {
 
-		logger.Error("Got error converting string to time %s", err.Error())
+		log.Printf("Got error converting string to time %s", err.Error())
 		return dateDate
 	}
 
@@ -266,7 +263,7 @@ func StringToTime(stringTime string) time.Time {
 	myTime, err := time.Parse(newLayout, stringTime)
 	if err != nil {
 
-		logger.Error("StringToTime error converting %s to time %s",stringTime,err.Error())
+		log.Printf("StringToTime error converting %s to time %s",stringTime,err.Error())
 	}
 
 	return myTime
@@ -344,14 +341,12 @@ func CronString(repeatType string, repeatIntervalValue string, date string, send
 
 		//sendTime := strings.TrimSpace(sendTime)
 
-		logger.Info("got sendTime %s ", sendTime)
-
 		parts := strings.Split(sendTime, ":")
 
 		if len(parts) < 2 {
 
 			err := fmt.Sprintf("invalid send time %s ", sendTime)
-			logger.Error("got error parsing time error %s ", aurora.Red(err))
+			log.Printf("got error parsing time error %s ", err)
 			return nil, errors.New(err)
 		}
 		// expected format
@@ -373,7 +368,7 @@ func CronString(repeatType string, repeatIntervalValue string, date string, send
 
 	if err != nil {
 
-		logger.Error("got error parsing date %s error %s ", aurora.Green(mydate), aurora.Red(err.Error()))
+		log.Printf("got error parsing date %s error %s ", mydate, err.Error())
 		return nil, err
 	}
 
@@ -414,14 +409,6 @@ func CronString(repeatType string, repeatIntervalValue string, date string, send
 func DateLayout() string {
 
 	return DateFormat
-}
-
-func NextMonth(t time.Time) time.Time {
-
-	myTime := now.New(t)
-	myT := myTime.EndOfMonth()
-	myTT := myT.Add(48 * time.Hour)
-	return myTT
 }
 
 func RemoveInvalidCharacters(message string) string {

@@ -1,9 +1,9 @@
 package library
 
 import (
-	"bitbucket.org/dnda-tech/api-and-billing/app/logger"
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -23,7 +23,7 @@ func (a *Db) InsertQuery() (lastInsertID int64, err error) {
 	stmt, err := a.DB.Prepare(a.Query)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return 0, err
 	}
 
@@ -32,13 +32,13 @@ func (a *Db) InsertQuery() (lastInsertID int64, err error) {
 	res, err := stmt.Exec(a.Params...)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return 0, err
 	}
 
 	lastInsertId, err := res.LastInsertId()
 	if err != nil {
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return 0, err
 	}
 
@@ -51,7 +51,7 @@ func (a *Db) UpdateQuery() (rowsAffected int64, err error) {
 	stmt, err := a.DB.Prepare(a.Query)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return 0, err
 	}
 
@@ -60,13 +60,13 @@ func (a *Db) UpdateQuery() (rowsAffected int64, err error) {
 	res, err := stmt.Exec(a.Params...)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return 0, err
 	}
 
 	rowsaffected, err := res.RowsAffected()
 	if err != nil {
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return 0, err
 	}
 
@@ -83,7 +83,7 @@ func (a *Db) InsertInTransaction() (lastInsertID *int64, err error) {
 		a.TX, err = a.DB.Begin()
 		if err != nil {
 
-			logger.Error("Got error starting transaction %s ", err.Error())
+			log.Printf("Got error starting transaction %s ", err.Error())
 			return nil, err
 		}
 
@@ -92,7 +92,7 @@ func (a *Db) InsertInTransaction() (lastInsertID *int64, err error) {
 	stmt, err := a.TX.Prepare(a.Query)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
@@ -105,7 +105,7 @@ func (a *Db) InsertInTransaction() (lastInsertID *int64, err error) {
 
 			_ = a.TX.Rollback()
 		}
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
@@ -116,7 +116,7 @@ func (a *Db) InsertInTransaction() (lastInsertID *int64, err error) {
 
 			_ = a.TX.Rollback()
 		}
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
@@ -133,7 +133,7 @@ func (a *Db) InsertIgnoreInTransaction() (lastInsertID *int64, err error) {
 	stmt, err := a.TX.Prepare(a.Query)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
@@ -142,14 +142,14 @@ func (a *Db) InsertIgnoreInTransaction() (lastInsertID *int64, err error) {
 	res, err := stmt.Exec(a.Params...)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
 	lastInsertId, err := res.LastInsertId()
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, nil
 	}
 
@@ -161,7 +161,7 @@ func (a *Db) UpdateInTransaction() (rowsAffected *int64, err error) {
 	stmt, err := a.TX.Prepare(a.Query)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
@@ -170,14 +170,14 @@ func (a *Db) UpdateInTransaction() (rowsAffected *int64, err error) {
 	res, err := stmt.Exec(a.Params...)
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 
 	rowsaffected, err := res.RowsAffected()
 	if err != nil {
 
-		logger.Error(DbError, a.Query, a.Params, err.Error())
+		log.Printf(DbError, a.Query, a.Params, err.Error())
 		return nil, err
 	}
 

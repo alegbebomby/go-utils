@@ -1,7 +1,6 @@
 package library
 
 import (
-	"bitbucket.org/dnda-tech/api-and-billing/app/constants"
 	"encoding/json"
 	"fmt"
 	session "github.com/labstack/echo-contrib/session"
@@ -24,7 +23,7 @@ func GetSessionValues(c echo.Context) (clientID int64, userID int64, roleID int6
 
 	sess, err := session.Get("session", c)
 	if err != nil {
-		return 0, 0, 0, nil, http.StatusUnprocessableEntity, err //fmt.Errorf(constants.SessionTimeout)
+		return 0, 0, 0, nil, http.StatusUnprocessableEntity, err //fmt.Errorf("session timeout")
 	}
 
 	// Set user as authenticated
@@ -33,7 +32,7 @@ func GetSessionValues(c echo.Context) (clientID int64, userID int64, roleID int6
 	roleID,_ = GetInt64Value(sess.Values["role_id"],0)
 
 	if clientID == 0 || userID == 0 {
-		return 0, 0, 0, nil, http.StatusUnprocessableEntity, fmt.Errorf(constants.SessionTimeout)
+		return 0, 0, 0, nil, http.StatusUnprocessableEntity, fmt.Errorf("session timeout")
 	}
 
 	return clientID, userID, roleID, GetJSONRawBody(c), http.StatusOK, nil
@@ -43,7 +42,7 @@ func GetSessionOnly(c echo.Context) (clientID int64, userID int64, roleID int64,
 
 	sess, err := session.Get("session", c)
 	if err != nil {
-		return 0, 0, 0, http.StatusUnprocessableEntity, err //fmt.Errorf(constants.SessionTimeout)
+		return 0, 0, 0, http.StatusUnprocessableEntity, err //fmt.Errorf("session timeout")
 	}
 
 	// Set user as authenticated
@@ -52,7 +51,7 @@ func GetSessionOnly(c echo.Context) (clientID int64, userID int64, roleID int64,
 	roleID,_ = GetInt64Value(sess.Values["role_id"],0)
 
 	if clientID == 0 || userID == 0 {
-		return 0, 0, 0, http.StatusUnprocessableEntity, fmt.Errorf(constants.SessionTimeout)
+		return 0, 0, 0, http.StatusUnprocessableEntity, fmt.Errorf("session timeout")
 	}
 
 	return clientID, userID, roleID, http.StatusOK, nil

@@ -1,10 +1,10 @@
 package library
 
 import (
-	"bitbucket.org/dnda-tech/api-and-billing/app/logger"
-	"bitbucket.org/dnda-tech/api-and-billing/app/models"
 	"database/sql"
 	"fmt"
+	"github.com/mudphilo/go-utils/models"
+	"log"
 	"strings"
 )
 
@@ -105,12 +105,11 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 
 	// retrieve user roles
 	dbUtil.SetQuery(sqlQuery)
-	logger.GetLog().Errorf("sqlQuery %s",countQuery)
 
 	rows, err := dbUtil.Fetch()
 	if err != nil {
 
-		logger.GetLog().Error("error pulling vuetable data %s",err.Error())
+		log.Printf("error pulling vuetable data %s",err.Error())
 
 		resp.Total = total
 		resp.PerPage = perPage
