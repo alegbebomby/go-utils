@@ -1,21 +1,30 @@
 package library
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/jinzhu/now"
 	"log"
 	"math"
+	"net"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 const notSetError = "is not set"
 const StandardDateFormat = "2006-01-02 15:04:05"
 const DateFormat = "2006-01-02"
+
+var (
+	once      sync.Once
+	netClient *http.Client
+)
 
 func GetString(payload map[string]interface{}, name string, defaults string) (string, error) {
 
@@ -481,4 +490,70 @@ func NextMonth(t time.Time) time.Time {
 	myT := myTime.EndOfMonth()
 	myTT := myT.Add(48 * time.Hour)
 	return myTT
+}
+
+func NewNetClient() *http.Client {
+
+	once.Do(func() {
+
+		var netTransport = &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout: 60 * time.Second,
+			}).Dial,
+			TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
+			TLSHandshakeTimeout: 60 * time.Second,
+		}
+
+		netClient = &http.Client{
+			Timeout:   time.Second * 60,
+			Transport: netTransport,
+		}
+	})
+
+	return netClient
+}
+
+func HTTPPost(url string, headers map[string] string, payload interface{}) (httpStatus int, response string) {
+
+	if payload == nil {
+
+		payload = "{}"
+	}
+
+	jsonData, _ := json.Marshal(payload)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+
+		log.Printf("got error making http request %s", err.Error())
+		return 0, ""
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	if headers != nil {
+
+		for k,v := range headers {
+
+			req.Header.Set(k,v)
+		}
+	}
+
+	resp, err := NewNetClient().Do(req)
+	if err != nil {
+
+		log.Printf("got error making http request %s", err.Error())
+		return 0, ""
+	}
+
+	st := resp.StatusCode
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+
+		log.Printf("got error making http request %s",err.Error())
+		return st,""
+	}
+
+	return st, string(body)
 }
