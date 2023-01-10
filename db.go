@@ -186,10 +186,22 @@ func (a *Db) UpdateInTransaction() (rowsAffected *int64, err error) {
 
 func (a *Db) FetchOne() *sql.Row {
 
+	_, err := a.DB.Exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+	if err != nil {
+
+		log.Printf("error disabling ONLY_FULL_GROUP_BY %s",err.Error())
+	}
+
 	return a.DB.QueryRow(a.Query, a.Params...)
 }
 
 func (a *Db) Fetch() (*sql.Rows, error) {
+
+	_, err := a.DB.Exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+	if err != nil {
+
+		log.Printf("error disabling ONLY_FULL_GROUP_BY %s",err.Error())
+	}
 
 	rows, err := a.DB.Query(a.Query, a.Params...)
 	if err != nil {
