@@ -191,7 +191,13 @@ func (a *Db) FetchOne() *sql.Row {
 
 func (a *Db) Fetch() (*sql.Rows, error) {
 
-	return a.DB.Query(a.Query, a.Params...)
+	rows, err := a.DB.Query(a.Query, a.Params...)
+	if err != nil {
+
+		log.Printf("error fetching results from database using query %s  error %s",a.Query,err.Error())
+	}
+
+	return rows, err
 }
 
 func (a *Db) SetParams(params ...interface{}) {
