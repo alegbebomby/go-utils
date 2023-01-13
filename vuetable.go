@@ -61,15 +61,20 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	// count query
 	countQuery := fmt.Sprintf("SELECT count(%s) as total FROM %s %s WHERE %s ", primaryKey, tableName, joinQuery, whereQuery())
 
+	log.Printf("got count query %s ",countQuery)
+
 	total := 0
 
 	dbUtil := Db{DB: db}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 
+	log.Printf("got params %v ",params...)
+
 	err := dbUtil.FetchOne().Scan(&total)
 	 if err != nil {
 
+	 	log.Printf("got error retrieving total number of records %s ",err.Error())
 		return models.Pagination{}
 	}
 
@@ -105,6 +110,7 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 
 	// retrieve user roles
 	dbUtil.SetQuery(sqlQuery)
+	log.Printf("got query %s ",sqlQuery)
 
 	rows, err := dbUtil.Fetch()
 	if err != nil {
