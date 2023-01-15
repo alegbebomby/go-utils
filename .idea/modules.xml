@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../dadanada/minio-storage-library/minio-storage-library.iml" filepath="$PROJECT_DIR$/../dadanada/minio-storage-library/minio-storage-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/utils.iml" filepath="$PROJECT_DIR$/.idea/utils.iml" />
     </modules>
   </component>
