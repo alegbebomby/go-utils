@@ -349,7 +349,19 @@ func (a *Db) Update(tableName string, andCondition,data map[string]interface{}) 
 
 	for column, value := range andCondition {
 
-		conditions = append(conditions, fmt.Sprintf("%s = %v ",column,value))
+		x++
+		if a.Dialect == "postgres" {
+
+			conditions = append(conditions, fmt.Sprintf("%s = $%d ", column, x))
+
+		} else {
+
+			conditions = append(conditions, fmt.Sprintf("%s = ? ", column))
+
+		}
+
+		params = append(params, value)
+
 	}
 
 	sqlQueryParts := fmt.Sprintf("UPDATE  %s SET %s WHERE %s ",tableName,strings.Join(columns,","),strings.Join(conditions," AND "))
