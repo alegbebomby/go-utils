@@ -313,13 +313,13 @@ func (a *Db) Upsert(tableName string, data map[string]interface{},updates []stri
 
 		for _, f := range updates {
 
-			updatesPart = append(updatesPart,fmt.Sprintf("%s=VALUES(%s)",f,f))
+			updatesPart = append(updatesPart,fmt.Sprintf("%s=%s(%s)",f,a.getValueKeyword(),f))
 		}
 
 		updateString = fmt.Sprintf("ON DUPLICATE KEY UPDATE %s ",strings.Join(updatesPart,","))
 	}
 
-	sqlQueryParts := fmt.Sprintf("INSERT INTO %s (%s) VALUE (%s) %s",tableName,strings.Join(columns,","),strings.Join(placeHoldersParts,","),updateString)
+	sqlQueryParts := fmt.Sprintf("INSERT INTO %s (%s) %s (%s) %s",tableName,strings.Join(columns,","),a.getValueKeyword(),strings.Join(placeHoldersParts,","),updateString)
 
 	a.SetQuery(sqlQueryParts)
 	a.SetParams(params...)
@@ -455,7 +455,7 @@ func (a *Db) UpsertData(tableName string,primaryKey string, data map[string]inte
 
 	if a.Dialect == "postgres" {
 
-		sqlQueryParts = fmt.Sprintf("INSERT INTO %s (%s) VALUE (%s) %s RETURNING %s",tableName,strings.Join(columns,","),strings.Join(placeHoldersParts,","),updateString,primaryKey)
+		sqlQueryParts = fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s) %s RETURNING %s",tableName,strings.Join(columns,","),strings.Join(placeHoldersParts,","),updateString,primaryKey)
 
 	} else {
 
@@ -466,4 +466,14 @@ func (a *Db) UpsertData(tableName string,primaryKey string, data map[string]inte
 	a.SetQuery(sqlQueryParts)
 	a.SetParams(params...)
 	return a.InsertQuery()
+}
+
+func (a *Db) getValueKeyword() string {
+
+	if a.Dialect == "postgres" {
+
+		return "VALUES"
+	}
+
+	return "VALUE"
 }
