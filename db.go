@@ -25,7 +25,7 @@ func (a *Db) InsertQuery() (lastInsertID int64, err error) {
 
 		var lastInsertId sql.NullInt64
 
-		err = a.DB.QueryRow(a.Query).Scan(&lastInsertId)
+		err = a.DB.QueryRow(a.Query,a.Params...).Scan(&lastInsertId)
 		if err != nil {
 
 			log.Printf(DbError, a.Query, a.Params, err.Error())
