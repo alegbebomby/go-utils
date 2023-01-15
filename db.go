@@ -455,7 +455,15 @@ func (a *Db) UpsertData(tableName string,primaryKey string, data map[string]inte
 
 	if a.Dialect == "postgres" {
 
-		sqlQueryParts = fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s) %s RETURNING %s",tableName,strings.Join(columns,","),strings.Join(placeHoldersParts,","),updateString,primaryKey)
+		if len(primaryKey) > 0 {
+
+			sqlQueryParts = fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s) %s RETURNING %s",tableName,strings.Join(columns,","),strings.Join(placeHoldersParts,","),updateString,primaryKey)
+
+		} else {
+
+			sqlQueryParts = fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s) %s ",tableName,strings.Join(columns,","),strings.Join(placeHoldersParts,","),updateString)
+
+		}
 
 	} else {
 
