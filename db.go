@@ -313,7 +313,7 @@ func (a *Db) Upsert(tableName string, data map[string]interface{},updates []stri
 
 		for _, f := range updates {
 
-			updatesPart = append(updatesPart,fmt.Sprintf("%s=%s(%s)",f,a.getValueKeyword(),f))
+			updatesPart = append(updatesPart,fmt.Sprintf("%s=VALUES(%s)",f,f))
 		}
 
 		updateString = fmt.Sprintf("ON DUPLICATE KEY UPDATE %s ",strings.Join(updatesPart,","))
