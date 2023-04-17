@@ -36,7 +36,6 @@ func GetString(payload map[string]interface{}, name string, defaults string) (st
 		return defaults, errors.New(fmt.Sprintf("value %s not set", name))
 	}
 
-
 	v := reflect.ValueOf(payload[name])
 
 	switch v.Kind() {
