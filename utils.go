@@ -476,7 +476,6 @@ func ToMysqlDate(t time.Time) string {
 
 }
 
-
 func Contains(elems []string, elem string) bool {
 
 	for _, e := range elems {
@@ -559,4 +558,659 @@ func HTTPPost(url string, headers map[string] string, payload interface{}) (http
 	}
 
 	return st, string(body)
+}
+
+/*
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+*/
+
+func RunCron(cron string) bool {
+
+	cron = RemoveSpaces(cron)
+
+	if len(cron) == 0 {
+		return false
+	}
+
+	parts := strings.Split(cron, " ")
+	min := parts[0]
+	hour := parts[1]
+	day := parts[2]
+	month := parts[3]
+	day_of_week := parts[4]
+
+	sasa := time.Now()
+
+	_, now_month, now_day := sasa.Date()
+	now_hour, now_min, _ := sasa.Clock()
+
+	now_day_of_week := time.Now().Weekday()
+	now_day_of_week_number := getDayOfWeekNumber(now_day_of_week.String())
+	now_month_number := getMonthNumber(now_month.String())
+
+	var next bool
+
+	// check day of week
+	if strings.Compare(day_of_week, "*") == 0 {
+
+		next = true
+
+	} else {
+
+		// check if has -
+		if strings.Contains(day_of_week, "-") {
+
+			dw_parts := strings.Split(day_of_week, "-")
+
+			start_day_of_week := getDayOfWeekNumber(dw_parts[0])
+			end_day_of_week := getDayOfWeekNumber(dw_parts[1])
+
+			if now_day_of_week_number >= start_day_of_week && now_day_of_week_number <= end_day_of_week {
+
+				next = true
+
+			} else {
+
+				next = false
+			}
+
+		} else {
+
+			dw_parts := strings.Split(day_of_week, ",")
+
+			for _, w := range dw_parts {
+
+				dow := getDayOfWeekNumber(w)
+
+				log.Printf(" got getDayOfWeekNumber(%s) == %d ", w, dow)
+
+				if dow == now_day_of_week_number {
+
+					next = true
+					break
+				}
+			}
+		}
+	}
+
+	// check month
+	if next {
+
+		next = false
+		if strings.Compare(month, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			mMonth := getMonthNumber(month)
+
+			log.Printf("got mMonth %d ", mMonth)
+
+			if getMonthNumber(month) == now_month_number {
+
+				next = true
+
+			} else if strings.Contains(month, "-") {
+
+				dw_parts := strings.Split(month, "-")
+
+				start_day_of_week := getMonthNumber(dw_parts[0])
+				end_day_of_week := getMonthNumber(dw_parts[1])
+
+				if now_month_number >= start_day_of_week && now_month_number <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(month, ",")
+
+				for _, w := range dw_parts {
+
+					if getMonthNumber(w) == now_month_number {
+
+						next = true
+						break
+					}
+				}
+			}
+		}
+
+	}
+
+
+	// check day of month
+	if next {
+
+		next = false
+		if strings.Compare(day, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(day, "-") {
+
+				dw_parts := strings.Split(day, "-")
+
+				start_day_of_week, _ := strconv.Atoi(dw_parts[0])
+				end_day_of_week, _ := strconv.Atoi(dw_parts[1])
+
+				if now_day >= start_day_of_week && now_day <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(day, ",")
+
+				for _, w := range dw_parts {
+
+					ww, _ := strconv.Atoi(w)
+
+					if ww == now_day {
+
+						next = true
+						break
+					}
+				}
+			}
+		}
+
+	}
+
+	// check hour
+	if next {
+
+		next = false
+		if strings.Compare(hour, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(hour, "-") {
+
+				dw_parts := strings.Split(hour, "-")
+
+				start_day_of_week, _ := strconv.Atoi(dw_parts[0])
+				end_day_of_week, _ := strconv.Atoi(dw_parts[1])
+
+				if now_hour >= start_day_of_week && now_hour <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(hour, ",")
+
+				for _, w := range dw_parts {
+
+					ww, _ := strconv.Atoi(w)
+
+					if ww == now_hour {
+
+						next = true
+						break
+					}
+				}
+			}
+		}
+
+	}
+
+	// check minute
+	if next {
+
+		next = false
+		if strings.Compare(min, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(min, "-") {
+
+				dw_parts := strings.Split(min, "-")
+
+				start_day_of_week, _ := strconv.Atoi(dw_parts[0])
+				end_day_of_week, _ := strconv.Atoi(dw_parts[1])
+
+				if now_min >= start_day_of_week && now_min <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(min, ",")
+
+				for _, w := range dw_parts {
+
+					ww, _ := strconv.Atoi(w)
+
+					if ww == now_min {
+
+						next = true
+						break
+					}
+				}
+			}
+		}
+
+	}
+
+	return next
+}
+
+func ValidRunCron(cron string) bool {
+
+	cron = RemoveSpaces(cron)
+
+	parts := strings.Split(cron, " ")
+
+	if len(parts) != 5 {
+
+		return false
+	}
+
+	min := parts[0]
+	hour := parts[1]
+	day := parts[2]
+	month := parts[3]
+	day_of_week := parts[4]
+
+	_, now_month, now_day := time.Now().Date()
+	now_hour, now_min, _ := time.Now().Clock()
+
+	now_day_of_week := time.Now().Weekday()
+	now_day_of_week_number := getDayOfWeekNumber(now_day_of_week.String())
+	now_month_number := getMonthNumber(now_month.String())
+
+	var next bool
+
+	// check day of week
+	if strings.Compare(day_of_week, "*") == 0 {
+
+		next = true
+
+	} else {
+
+		// check if has -
+		if strings.Contains(day_of_week, "-") {
+
+			dw_parts := strings.Split(day_of_week, "-")
+
+			start_day_of_week := getDayOfWeekNumber(dw_parts[0])
+			end_day_of_week := getDayOfWeekNumber(dw_parts[1])
+
+			if now_day_of_week_number >= start_day_of_week && now_day_of_week_number <= end_day_of_week {
+
+				next = true
+
+			} else {
+
+				next = false
+			}
+
+		} else {
+
+			dw_parts := strings.Split(day_of_week, ",")
+
+			for _, w := range dw_parts {
+
+				if getDayOfWeekNumber(w) == now_day_of_week_number {
+
+					next = true
+				}
+			}
+		}
+	}
+
+	// check month
+	if next {
+
+		next = false
+		if strings.Compare(month, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(month, "-") {
+
+				dw_parts := strings.Split(day_of_week, "-")
+
+				start_day_of_week := getMonthNumber(dw_parts[0])
+				end_day_of_week := getMonthNumber(dw_parts[1])
+
+				if now_month_number >= start_day_of_week && now_month_number <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(day_of_week, ",")
+
+				for _, w := range dw_parts {
+
+					if getMonthNumber(w) == now_month_number {
+
+						next = true
+					}
+				}
+			}
+		}
+
+	}
+
+	// check day of month
+	if next {
+
+		next = false
+		if strings.Compare(day, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(day, "-") {
+
+				dw_parts := strings.Split(day, "-")
+
+				start_day_of_week, _ := strconv.Atoi(dw_parts[0])
+				end_day_of_week, _ := strconv.Atoi(dw_parts[1])
+
+				if now_day >= start_day_of_week && now_day <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(day, ",")
+
+				for _, w := range dw_parts {
+
+					ww, _ := strconv.Atoi(w)
+
+					if ww == now_day {
+
+						next = true
+					}
+				}
+			}
+		}
+
+	}
+
+	// check hour
+	if next {
+
+		next = false
+		if strings.Compare(hour, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(hour, "-") {
+
+				dw_parts := strings.Split(hour, "-")
+
+				start_day_of_week, _ := strconv.Atoi(dw_parts[0])
+				end_day_of_week, _ := strconv.Atoi(dw_parts[1])
+
+				if now_hour >= start_day_of_week && now_hour <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(hour, ",")
+
+				for _, w := range dw_parts {
+
+					ww, _ := strconv.Atoi(w)
+
+					if ww == now_hour {
+
+						next = true
+					}
+				}
+			}
+		}
+
+	}
+
+	// check minute
+	if next {
+
+		next = false
+		if strings.Compare(min, "*") == 0 {
+
+			next = true
+
+		} else {
+
+			// check if has -
+			if strings.Contains(min, "-") {
+
+				dw_parts := strings.Split(min, "-")
+
+				start_day_of_week, _ := strconv.Atoi(dw_parts[0])
+				end_day_of_week, _ := strconv.Atoi(dw_parts[1])
+
+				if now_min >= start_day_of_week && now_min <= end_day_of_week {
+
+					next = true
+
+				} else {
+
+					next = false
+				}
+
+			} else {
+
+				dw_parts := strings.Split(min, ",")
+
+				for _, w := range dw_parts {
+
+					ww, _ := strconv.Atoi(w)
+
+					if ww == now_min {
+
+						next = true
+					}
+				}
+			}
+		}
+
+	}
+
+	return next
+}
+
+func RemoveSpaces(text string) string {
+
+	space := regexp.MustCompile(`\s+`)
+	return space.ReplaceAllString(text, " ")
+}
+
+func IsNumeric(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
+}
+
+func getMonthNumber(monthName string) int {
+
+	if IsNumeric(monthName) {
+
+		dw, _ := strconv.Atoi(monthName)
+		return dw
+	}
+
+	month := strings.ToLower(monthName)
+
+	switch month {
+	case "jan":
+	case "january":
+		return 1
+		break
+	case "feb":
+	case "february":
+		return 2
+		break
+	case "mar":
+	case "march":
+		return 3
+		break
+	case "apr":
+	case "april":
+		return 4
+		break
+	case "may":
+		return 5
+		break
+	case "jun":
+	case "june":
+		return 6
+		break
+	case "jul":
+	case "july":
+		return 7
+		break
+	case "aug":
+	case "august":
+		return 8
+		break
+	case "sep":
+	case "september":
+		return 9
+		break
+	case "oct":
+	case "october":
+		return 10
+		break
+	case "nov":
+	case "november":
+		return 11
+		break
+	case "dec":
+	case "december":
+		return 12
+		break
+	}
+
+	return 0
+
+}
+
+func getDayOfWeekNumber(dayOfWeek string) int {
+
+	if IsNumeric(dayOfWeek) {
+
+		dw, _ := strconv.Atoi(dayOfWeek)
+		return dw
+	}
+
+	dayOfWeek = strings.ToLower(RemoveSpaces(dayOfWeek))
+
+	log.Printf("got dayOfWeek %s ", dayOfWeek)
+
+	switch dayOfWeek {
+	case "sun":
+		return 1
+	case "sunday":
+		return 1
+		break
+
+	case "mon":
+		return 2
+	case "monday":
+		return 2
+		break
+
+	case "tue":
+		return 3
+	case "tuesday":
+		return 3
+		break
+
+	case "wed":
+		return 4
+	case "wednesday":
+		return 4
+		break
+
+	case "thu":
+		return 5
+	case "thursday":
+		return 5
+		break
+
+	case "fri":
+		return 6
+	case "friday":
+		return 6
+		break
+
+	case "sat":
+		return 7
+	case "saturday":
+		return 7
+		break
+	}
+
+	return 0
+
 }
