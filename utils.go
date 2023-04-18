@@ -835,6 +835,7 @@ func RunCron(cron string) bool {
 	return next
 }
 
+
 func ValidRunCron(cron string) bool {
 
 	cron = RemoveSpaces(cron)
