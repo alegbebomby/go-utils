@@ -631,8 +631,6 @@ func RunCron(cron string) bool {
 
 				dow := getDayOfWeekNumber(w)
 
-				log.Printf(" got getDayOfWeekNumber(%s) == %d ", w, dow)
-
 				if dow == now_day_of_week_number {
 
 					next = true
@@ -652,9 +650,7 @@ func RunCron(cron string) bool {
 
 		} else {
 
-			mMonth := getMonthNumber(month)
-
-			log.Printf("got mMonth %d ", mMonth)
+			//mMonth := getMonthNumber(month)
 
 			if getMonthNumber(month) == now_month_number {
 
@@ -1165,8 +1161,6 @@ func getDayOfWeekNumber(dayOfWeek string) int {
 	}
 
 	dayOfWeek = strings.ToLower(RemoveSpaces(dayOfWeek))
-
-	log.Printf("got dayOfWeek %s ", dayOfWeek)
 
 	switch dayOfWeek {
 	case "sun":
