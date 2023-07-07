@@ -478,6 +478,7 @@ func (a *Db) UpsertData(tableName string,primaryKey string, data map[string]inte
 
 func (a *Db) getValueKeyword() string {
 
+
 	if a.Dialect == "postgres" {
 
 		return "VALUES"
