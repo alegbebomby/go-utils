@@ -484,5 +484,5 @@ func (a *Db) getValueKeyword() string {
 		return "VALUES"
 	}
 
-	return "VALUE"
+	return "VALUES"
 }
