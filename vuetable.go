@@ -156,7 +156,7 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	return resp
 }
 
-func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []interface{}, headers []string) {
+func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
