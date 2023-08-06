@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/mudphilo/go-utils/models"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -18,6 +20,8 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	params := paginator.Params
 	tableName := paginator.TableName
 	primaryKey := paginator.PrimaryKey
+
+	isDebug,_ := strconv.ParseInt(os.Getenv("DEBUG"),10,64)
 
 	perPage := int(search.PerPage)
 	page := int(search.Page)
@@ -67,6 +71,14 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 
+	if isDebug != 0 {
+
+		log.Printf("Count Query | %s",countQuery)
+		log.Printf("Params | %v",params...)
+
+	}
+
+
 	err := dbUtil.FetchOne().Scan(&total)
 	 if err != nil {
 
@@ -83,6 +95,7 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	if currentPage > 0 {
 
 		offset = perPage * currentPage
+
 	} else {
 
 		currentPage = 0
@@ -96,9 +109,16 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 
 	from := offset + 1
 	currentPage++
+
 	limit := fmt.Sprintf(" LIMIT %d,%d", offset, perPage)
 
 	sqlQuery := fmt.Sprintf("SELECT %s FROM %s %s WHERE %s %s %s %s ", field, tableName, joinQuery, whereQuery(), group(), orderBy, limit)
+
+	if isDebug != 0 {
+
+		log.Printf("Data Query | %s",sqlQuery)
+
+	}
 
 	var resp models.Pagination
 
@@ -134,4 +154,87 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	resp.To = offset + len(data)
 	resp.Data = data
 	return resp
+}
+
+func DownloadVueTableData(db *sql.DB, paginator models.Paginator) []interface{} {
+
+	search := paginator.VueTable
+	joins := paginator.Joins
+	fields := paginator.Fields
+	orWhere := paginator.OrWhere
+	groupBy := paginator.GroupBy
+	params := paginator.Params
+	tableName := paginator.TableName
+	primaryKey := paginator.PrimaryKey
+
+	joinQuery := strings.Join(joins[:], " ")
+	field := strings.Join(fields[:], ",")
+
+	whereQuery := func() string {
+
+		if len(orWhere) > 0 {
+
+			return strings.Join(orWhere[:], " AND ")
+		}
+		return "1"
+	}
+
+	group := func() string {
+
+		if len(groupBy) > 0 {
+
+			return fmt.Sprintf("GROUP BY %s", strings.Join(groupBy[:], " , "))
+
+		}
+
+		return ""
+	}
+
+	// build order by query
+
+	orderBy := ""
+
+	if len(search.Sort) > 0 {
+
+		sortPrams := strings.Split(search.Sort, "|")
+
+		column := sortPrams[0]
+		direction := sortPrams[1]
+		orderBy = fmt.Sprintf("ORDER BY %s %s ", column, direction)
+	}
+
+	// count query
+	countQuery := fmt.Sprintf("SELECT count(%s) as total FROM %s %s WHERE %s ", primaryKey, tableName, joinQuery, whereQuery())
+
+	total := 0
+
+	dbUtil := Db{DB: db}
+	dbUtil.SetQuery(countQuery)
+	dbUtil.SetParams(params...)
+
+	err := dbUtil.FetchOne().Scan(&total)
+	if err != nil {
+
+		log.Printf("got error retrieving total number of records %s ",err.Error())
+		return nil
+	}
+
+	sqlQuery := fmt.Sprintf("SELECT %s FROM %s %s WHERE %s %s %s ", field, tableName, joinQuery, whereQuery(), group(), orderBy)
+
+	// pull records
+
+	// retrieve user roles
+	dbUtil.SetQuery(sqlQuery)
+
+	rows, err := dbUtil.Fetch()
+	if err != nil {
+
+		log.Printf("error pulling vuetable data %s",err.Error())
+		return nil
+
+	}
+
+	defer rows.Close()
+
+	return paginator.Results(rows)
 }
