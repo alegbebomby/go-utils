@@ -156,7 +156,7 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	return resp
 }
 
-func DownloadVueTableData(db *sql.DB, paginator models.Paginator) []interface{} {
+func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []interface{}, headers []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -166,9 +166,18 @@ func DownloadVueTableData(db *sql.DB, paginator models.Paginator) []interface{} 
 	params := paginator.Params
 	tableName := paginator.TableName
 	primaryKey := paginator.PrimaryKey
+	isDebug,_ := strconv.ParseInt(os.Getenv("DEBUG"),10,64)
 
 	joinQuery := strings.Join(joins[:], " ")
 	field := strings.Join(fields[:], ",")
+
+	var headers []string
+
+	for _, h := range fields {
+
+		parts := strings.Split(h," ")
+		headers = append(headers,parts[len(parts) - 1])
+	}
 
 	whereQuery := func() string {
 
@@ -211,12 +220,17 @@ func DownloadVueTableData(db *sql.DB, paginator models.Paginator) []interface{} 
 	dbUtil := Db{DB: db}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
+	if isDebug != 0 {
 
+		log.Printf("Count Query | %s",countQuery)
+		log.Printf("Params | %v",params...)
+
+	}
 	err := dbUtil.FetchOne().Scan(&total)
 	if err != nil {
 
 		log.Printf("got error retrieving total number of records %s ",err.Error())
-		return nil
+		return nil,headers
 	}
 
 	sqlQuery := fmt.Sprintf("SELECT %s FROM %s %s WHERE %s %s %s ", field, tableName, joinQuery, whereQuery(), group(), orderBy)
@@ -225,16 +239,21 @@ func DownloadVueTableData(db *sql.DB, paginator models.Paginator) []interface{} 
 
 	// retrieve user roles
 	dbUtil.SetQuery(sqlQuery)
+	if isDebug != 0 {
 
+		log.Printf("Data Query | %s",sqlQuery)
+
+	}
 	rows, err := dbUtil.Fetch()
 	if err != nil {
 
 		log.Printf("error pulling vuetable data %s",err.Error())
-		return nil
+		return nil, headers
 
 	}
 
 	defer rows.Close()
 
-	return paginator.Results(rows)
+	rowData = paginator.Results(rows)
+	return rowData, headers
 }
