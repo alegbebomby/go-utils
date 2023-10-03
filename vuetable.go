@@ -212,8 +212,24 @@ func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []int
 		orderBy = fmt.Sprintf("ORDER BY %s %s ", column, direction)
 	}
 
+	hardLimit,_ := strconv.ParseInt(os.Getenv("HARD_SQL_FETCH_LIMIT"),10,64)
+	if hardLimit == 0 {
+
+		hardLimit = 200000
+	}
+
+	var countQuery string
+
+	if hardLimit == -1 {
+
+		countQuery = fmt.Sprintf("SELECT count(%s) as total FROM %s %s WHERE %s ", primaryKey, tableName, joinQuery, whereQuery())
+
+	} else {
+
+		countQuery = fmt.Sprintf("SELECT count(%s) as total FROM %s %s WHERE %s LIMIT %d", primaryKey, tableName, joinQuery, whereQuery(),hardLimit)
+
+	}
 	// count query
-	countQuery := fmt.Sprintf("SELECT count(%s) as total FROM %s %s WHERE %s ", primaryKey, tableName, joinQuery, whereQuery())
 
 	total := 0
 
@@ -233,7 +249,17 @@ func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []int
 		return nil,headers
 	}
 
-	sqlQuery := fmt.Sprintf("SELECT %s FROM %s %s WHERE %s %s %s ", field, tableName, joinQuery, whereQuery(), group(), orderBy)
+	var sqlQuery string
+
+	if hardLimit == -1 {
+
+		sqlQuery = fmt.Sprintf("SELECT %s FROM %s %s WHERE %s %s %s ", field, tableName, joinQuery, whereQuery(), group(), orderBy)
+
+	} else {
+
+		sqlQuery = fmt.Sprintf("SELECT %s FROM %s %s WHERE %s %s %s LIMIT %d", field, tableName, joinQuery, whereQuery(), group(), orderBy, hardLimit)
+
+	}
 
 	// pull records
 
