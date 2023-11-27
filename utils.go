@@ -515,51 +515,6 @@ func NewNetClient() *http.Client {
 	return netClient
 }
 
-func HTTPPost(url string, headers map[string] string, payload interface{}) (httpStatus int, response string) {
-
-	if payload == nil {
-
-		payload = "{}"
-	}
-
-	jsonData, _ := json.Marshal(payload)
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-	if err != nil {
-
-		log.Printf("got error making http request %s", err.Error())
-		return 0, ""
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-
-	if headers != nil {
-
-		for k,v := range headers {
-
-			req.Header.Set(k,v)
-		}
-	}
-
-	resp, err := NewNetClient().Do(req)
-	if err != nil {
-
-		log.Printf("got error making http request %s", err.Error())
-		return 0, ""
-	}
-
-	st := resp.StatusCode
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-
-		log.Printf("got error making http request %s",err.Error())
-		return st,""
-	}
-
-	return st, string(body)
-}
-
 /*
 # For details see man 4 crontabs
 
