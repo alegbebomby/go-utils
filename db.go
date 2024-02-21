@@ -245,6 +245,12 @@ func (a *Db) FetchOne() *sql.Row {
 
 	}
 
+	if a.Params == nil || len(a.Params) == 0 {
+
+		return a.DB.QueryRow(a.Query)
+
+	}
+
 	return a.DB.QueryRow(a.Query, a.Params...)
 }
 
@@ -257,6 +263,18 @@ func (a *Db) Fetch() (*sql.Rows, error) {
 
 			log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
 		}
+
+	}
+
+	if a.Params == nil || len(a.Params) == 0 {
+
+		rows, err := a.DB.Query(a.Query)
+		if err != nil {
+
+			log.Printf("error fetching results from database using query %s | params %v |  error %s",a.Query,a.Params,err.Error())
+		}
+
+		return rows, err
 
 	}
 
