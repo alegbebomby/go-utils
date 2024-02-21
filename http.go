@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -60,18 +61,25 @@ func HTTPGet(remoteURL string, headers map[string] string, payload map[string]st
 
 	var fields []string
 
-	for key, value := range payload {
+	if payload != nil {
 
-		val := fmt.Sprintf("%s=%v", key, url.QueryEscape(value))
+		for key, value := range payload {
 
-		fields = append(fields, val)
+			val := fmt.Sprintf("%s=%v", key, url.QueryEscape(value))
+
+			fields = append(fields, val)
+		}
 	}
 
 	params := strings.Join(fields, "&")
 
 	endpoint := fmt.Sprintf("%s?%s", remoteURL, params)
 
-	log.Printf(" Wants to GET data to URL %s ", endpoint)
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		log.Printf(" Wants to GET data to URL %s ", endpoint)
+
+	}
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {

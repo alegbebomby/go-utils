@@ -263,7 +263,7 @@ func (a *Db) Fetch() (*sql.Rows, error) {
 	rows, err := a.DB.Query(a.Query, a.Params...)
 	if err != nil {
 
-		log.Printf("error fetching results from database using query %s  error %s",a.Query,err.Error())
+		log.Printf("error fetching results from database using query %s | params %v |  error %s",a.Query,a.Params,err.Error())
 	}
 
 	return rows, err
@@ -282,6 +282,36 @@ func (a *Db) SetQuery(query string) {
 func (a *Db) setResults(result ...interface{}) {
 
 	a.Result = result
+}
+
+func (a *Db) Insert(tableName string, data map[string]interface{}) (int64, error) {
+
+	var placeHoldersParts,columns []string
+	var params []interface{}
+
+	x := 0
+
+	for column, param := range data {
+
+		x++
+		params = append(params, param)
+		columns = append(columns, column)
+		if a.Dialect == "postgres" {
+
+			placeHoldersParts = append(placeHoldersParts,fmt.Sprintf("$%d",x))
+
+		} else {
+
+			placeHoldersParts = append(placeHoldersParts,"?")
+
+		}
+	}
+
+	sqlQueryParts := fmt.Sprintf("INSERT IGNORE INTO %s (%s) %s (%s) ",tableName,strings.Join(columns,","),a.getValueKeyword(),strings.Join(placeHoldersParts,","))
+
+	a.SetQuery(sqlQueryParts)
+	a.SetParams(params...)
+	return a.InsertQuery()
 }
 
 func (a *Db) Upsert(tableName string, data map[string]interface{},updates []string) (int64, error) {
