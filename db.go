@@ -245,7 +245,9 @@ func (a *Db) FetchOne() *sql.Row {
 
 	}
 
-	if a.Params == nil || len(a.Params) == 0 {
+	a.removeValidParameters()
+
+	if a.Params == nil || len(a.Params) == 0  {
 
 		return a.DB.QueryRow(a.Query)
 
@@ -266,12 +268,14 @@ func (a *Db) Fetch() (*sql.Rows, error) {
 
 	}
 
-	if a.Params == nil || len(a.Params) == 0 {
+	a.removeValidParameters()
+
+	if a.Params == nil || len(a.Params) == 0  {
 
 		rows, err := a.DB.Query(a.Query)
 		if err != nil {
 
-			log.Printf("error fetching results from database using query %s | params %v |  error %s",a.Query,a.Params,err.Error())
+			log.Printf("error fetching results from database using query %s | no params |  error %s",a.Query,err.Error())
 		}
 
 		return rows, err
@@ -533,4 +537,20 @@ func (a *Db) getValueKeyword() string {
 	}
 
 	return "VALUES"
+}
+
+func (a *Db) removeValidParameters()  {
+
+	var par []interface{}
+
+	for _, p := range a.Params {
+
+		if p != nil {
+
+			par = append(par,p)
+		}
+	}
+
+	a.Params = par
+
 }
