@@ -113,3 +113,59 @@ func HTTPGet(remoteURL string, headers map[string] string, payload map[string]st
 
 	return st, string(body)
 }
+
+func HTTPFormPost(endpoint string, headers map[string]string, payload map[string]string) (httpStatus int, response string) {
+
+	method := "POST"
+
+	var stringPayload []string
+
+	if payload != nil {
+
+		for key, value := range payload {
+
+			stringPayload = append(stringPayload, fmt.Sprintf("%s=%v", key, value))
+
+		}
+
+	}
+
+	requestPayload := strings.NewReader(strings.Join(stringPayload, "&"))
+
+	req, err := http.NewRequest(method, endpoint, requestPayload)
+	if err != nil {
+
+		log.Printf("got error making http request %s", err.Error())
+		return 0, ""
+	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	if headers != nil {
+
+		for key, value := range headers {
+
+			req.Header.Add(key, value)
+
+		}
+	}
+
+	resp, err := NewNetClient().Do(req)
+	if err != nil {
+
+		log.Printf("got error making http request %s", err.Error())
+		return 0, ""
+	}
+
+	defer resp.Body.Close()
+	st := resp.StatusCode
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+
+		log.Printf("got error making http request %s", err.Error())
+		return st, ""
+	}
+
+	return st, string(body)
+}

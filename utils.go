@@ -1,6 +1,7 @@
 package library
 
 import (
+	"context"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -499,6 +500,30 @@ func NewNetClient() *http.Client {
 			Dial: (&net.Dialer{
 				Timeout: 60 * time.Second,
 			}).Dial,
+			TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
+			TLSHandshakeTimeout: 60 * time.Second,
+		}
+
+		netClient = &http.Client{
+			Timeout:   time.Second * 60,
+			Transport: netTransport,
+		}
+	})
+
+	return netClient
+}
+
+func NewNetClientWithContext(ctx context.Context) *http.Client {
+
+	once.Do(func() {
+
+		var netTransport = &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout: 60 * time.Second,
+			}).Dial,
+			DialContext: (&net.Dialer{
+				Timeout: 60 * time.Second,
+			}).DialContext,
 			TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
 			TLSHandshakeTimeout: 60 * time.Second,
 		}
