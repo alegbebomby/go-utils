@@ -22,7 +22,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4f1842f-fd79-4e77-a200-02e401591e04" name="Default Changelist" comment="" />
+    <list default="true" id="c4f1842f-fd79-4e77-a200-02e401591e04" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -93,9 +95,9 @@
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="WindowStateProjectService">
-    <state x="341" y="155" width="597" height="490" key="find.popup" timestamp="1701069795496">
+    <state x="341" y="155" width="597" height="490" key="find.popup" timestamp="1710534011862">
       <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state x="341" y="155" width="597" height="490" key="find.popup/0.0.1280.800@0.0.1280.800" timestamp="1701069795496" />
+    <state x="341" y="155" width="597" height="490" key="find.popup/0.0.1280.800@0.0.1280.800" timestamp="1710534011862" />
   </component>
 </project>
