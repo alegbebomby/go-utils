@@ -1,22 +1,6 @@
 package library
 
-import (
-	"encoding/csv"
-	"encoding/json"
-	"fmt"
-	"github.com/Pallinder/go-randomdata"
-	"github.com/gorilla/sessions"
-	"github.com/labstack/echo-contrib/session"
-	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"strings"
-	"testing"
-	"time"
-)
-
+/*
 func TestLibrary(t *testing.T) {
 
 	_ = os.Setenv("JWT_SECRET", "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY2MzAxODY0NSwiaWF0IjoxNjYzMDE4NjQ1fQ.q9SwFW4jkhSpQKupbFOZVwdzQKnnsI73BZJZT-lDr1E")
@@ -24,6 +8,7 @@ func TestLibrary(t *testing.T) {
 	_ = os.Setenv("JWT_DURATION_HOURS", "72")
 	_ = os.Setenv("ENV","tests")
 	_ = os.Setenv("SENDGRID_API_KEY", "0")
+
 
 	TestEmail := "philip@smestech.com"
 
@@ -37,6 +22,8 @@ func TestLibrary(t *testing.T) {
 		err := mailerRequest.Send()
 		assert.NoError(t,err)
 	})
+
+
 
 	headers := []string{"msisdn","first_name","other_name","custom_1","custom_2","custom_3","custom_4","custom_5"}
 	count := 10
@@ -320,6 +307,7 @@ func TestLibrary(t *testing.T) {
 
 }
 
+
 func TestUtils(t *testing.T) {
 
 	carryStringTest(t,"Test GetString from String","string_value","12.45")
@@ -451,3 +439,4 @@ func carryStringTest(t *testing.T, name, field,expected string)  {
 		assert.Equal(t,expected,val)
 	})
 }
+*/

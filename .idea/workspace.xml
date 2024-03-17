@@ -24,6 +24,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c4f1842f-fd79-4e77-a200-02e401591e04" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/password.go" beforeDir="false" afterPath="$PROJECT_DIR$/password.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/go.opentelemetry.io/otel/internal/global/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/go.opentelemetry.io/otel/internal/global/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/go.opentelemetry.io/otel/internal/global/internal_logging.go" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/go.opentelemetry.io/otel/internal/global/internal_logging.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,6 +78,24 @@
     <property name="settings.editor.selected.configurable" value="project.propCompiler" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
+  <component name="RunManager">
+    <configuration name="TestLibrary in github.com/mudphilo/go-utils" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="utils" />
+      <working_directory value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/mudphilo/go-utils" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <pattern value="^\QTestLibrary\E$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestLibrary in github.com/mudphilo/go-utils" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
@@ -95,9 +116,13 @@
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="WindowStateProjectService">
-    <state x="341" y="155" width="597" height="490" key="find.popup" timestamp="1710534011862">
+    <state x="440" y="334" key="#GOROOT" timestamp="1710687173999">
       <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state x="341" y="155" width="597" height="490" key="find.popup/0.0.1280.800@0.0.1280.800" timestamp="1710534011862" />
+    <state x="440" y="334" key="#GOROOT/0.0.1280.800@0.0.1280.800" timestamp="1710687173999" />
+    <state x="341" y="155" width="597" height="490" key="find.popup" timestamp="1710687154284">
+      <screen x="0" y="0" width="1280" height="800" />
+    </state>
+    <state x="341" y="155" width="597" height="490" key="find.popup/0.0.1280.800@0.0.1280.800" timestamp="1710687154284" />
   </component>
 </project>
