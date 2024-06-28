@@ -23,55 +23,61 @@ const DbError = "Got error  preparing a.Query %s a.Params %v error %s "
 
 func (a *Db) StartTransaction() error {
 
-	if a.Dialect == "" || a.Dialect == "mysql" {
+	if a.Dialect == "postgres" {
 
-		if a.Context == nil {
-
-			tx, err := a.DB.BeginTx(a.Context, nil)
-			if err != nil {
-
-				log.Printf("error starting transaction %s ",err.Error())
-				return err
-			}
-
-			a.TX = tx
-
-		} else {
-
-
-			tx, err := a.DB.Begin()
-			if err != nil {
-
-				log.Printf("error starting transaction %s ",err.Error())
-				return err
-			}
-			a.TX = tx
-
-		}
+		return fmt.Errorf("transactions are not implemented for %s",a.Dialect)
 
 	}
 
-	return fmt.Errorf("not implemented")
+	if a.Context == nil {
+
+		tx, err := a.DB.BeginTx(a.Context, nil)
+		if err != nil {
+
+			log.Printf("error starting transaction %s ",err.Error())
+			return err
+		}
+
+		a.TX = tx
+
+	} else {
+
+
+		tx, err := a.DB.Begin()
+		if err != nil {
+
+			log.Printf("error starting transaction %s ",err.Error())
+			return err
+		}
+		a.TX = tx
+
+	}
+
+	return nil
+
 }
 
 func (a *Db) Rollback() error {
 
-	if a.TX != nil {
+	if a.TX == nil {
 
-		return a.TX.Rollback()
+		return fmt.Errorf("Transaction was not started ")
+
 	}
 
-	return fmt.Errorf("not implemented")
+	return a.TX.Rollback()
+
 }
 
 func (a *Db) Commit() error {
 
-	if a.TX != nil {
+	if a.TX == nil {
 
-		return a.TX.Commit()
+		return fmt.Errorf("Transaction was not started ")
+
 	}
 
-	return fmt.Errorf("not implemented")
+	return a.TX.Commit()
 }
 
 func (a *Db) InsertQuery() (lastInsertID int64, err error) {
