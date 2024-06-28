@@ -11,8 +11,7 @@ import (
 	"strings"
 )
 
-// Deprecated: please use PaginateData
-func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
+func PaginateData(db *sql.DB, paginator models.Paginator) models.Pagination {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -186,8 +185,7 @@ func GetVueTableData(db *sql.DB, paginator models.Paginator) models.Pagination {
 	return resp
 }
 
-// Deprecated: please use PaginateDataWithContext
-func GetVueTableDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) models.Pagination {
+func PaginateDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) models.Pagination {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -367,8 +365,7 @@ func GetVueTableDataWithContext(ctx context.Context, db *sql.DB, paginator model
 	return resp
 }
 
-// Deprecated: please use DownloadPaginatedData
-func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
+func DownloadPaginatedData(db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -524,8 +521,7 @@ func DownloadVueTableData(db *sql.DB, paginator models.Paginator) (rowData []int
 	return rowData, headers
 }
 
-// Deprecated: please use DownloadPaginatedDataWithContext
-func DownloadVueTableDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
+func DownloadPaginatedDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins

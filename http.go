@@ -29,14 +29,20 @@ func HTTPPost(url string, headers map[string] string, payload interface{}) (http
 		return 0, ""
 	}
 
+	logHeaders := make(map[string]string)
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
+
+	logHeaders["Content-Type"] =  "application/json"
+	logHeaders["Accept"] =  "application/json"
 
 	if headers != nil {
 
 		for k,v := range headers {
 
 			req.Header.Set(k,v)
+			logHeaders[k] = v
 		}
 	}
 
@@ -53,6 +59,41 @@ func HTTPPost(url string, headers map[string] string, payload interface{}) (http
 
 		log.Printf("got error making http request %s",err.Error())
 		return st,""
+	}
+
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		responseHeaders := make(map[string]string)
+
+		for k,v := range resp.Header {
+
+			responseHeaders[k] = strings.Join(v,",")
+
+		}
+
+		var heads,rheads []string
+		for k,v := range logHeaders {
+
+			heads = append(heads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		for k,v := range responseHeaders {
+
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		log.Printf("**** BEGIN HTTP REQUEST ****\n" +
+			"Remote Url : %s\n" +
+			"Request Headers:\n" +
+			"%s\n" +
+			"Request Payload\n" +
+			"\t%s\n" +
+			"Response Status: %d\n" +
+			"Response Headers\n" +
+			"%s\n" +
+			"Response Body\n" +
+			"**** BEGIN HTTP REQUEST ****" +
+			"\t%s",url,strings.Join(heads,"\n"),string(jsonData),st,strings.Join(rheads,","),string(body))
 	}
 
 	return st, string(body)
@@ -74,14 +115,20 @@ func HTTPPostWithContext(ctx context.Context, url string, headers map[string] st
 		return 0, ""
 	}
 
+	logHeaders := make(map[string]string)
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
+
+	logHeaders["Content-Type"] =  "application/json"
+	logHeaders["Accept"] =  "application/json"
 
 	if headers != nil {
 
 		for k,v := range headers {
 
 			req.Header.Set(k,v)
+			logHeaders[k] = v
 		}
 	}
 
@@ -98,6 +145,41 @@ func HTTPPostWithContext(ctx context.Context, url string, headers map[string] st
 
 		log.Printf("got error making http request %s",err.Error())
 		return st,""
+	}
+
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		responseHeaders := make(map[string]string)
+
+		for k,v := range resp.Header {
+
+			responseHeaders[k] = strings.Join(v,",")
+
+		}
+
+		var heads,rheads []string
+		for k,v := range logHeaders {
+
+			heads = append(heads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		for k,v := range responseHeaders {
+
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		log.Printf("**** BEGIN HTTP REQUEST ****\n" +
+			"Remote Url : %s\n" +
+			"Request Headers:\n" +
+			"%s\n" +
+			"Request Payload\n" +
+			"\t%s\n" +
+			"Response Status: %d\n" +
+			"Response Headers\n" +
+			"%s\n" +
+			"Response Body\n" +
+			"**** BEGIN HTTP REQUEST ****" +
+			"\t%s",url,strings.Join(heads,"\n"),string(jsonData),st,strings.Join(rheads,","),string(body))
 	}
 
 	return st, string(body)
@@ -123,7 +205,7 @@ func HTTPGet(remoteURL string, headers map[string] string, payload map[string]st
 
 	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
 
-		log.Printf(" Wants to GET data to URL %s ", endpoint)
+		log.Printf(" Request endpoint %s ", endpoint)
 
 	}
 
@@ -134,11 +216,20 @@ func HTTPGet(remoteURL string, headers map[string] string, payload map[string]st
 		return 0, ""
 	}
 
+	logHeaders := make(map[string]string)
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	logHeaders["Content-Type"] =  "application/json"
+	logHeaders["Accept"] =  "application/json"
+
 	if headers != nil {
 
 		for k,v := range headers {
 
 			req.Header.Set(k,v)
+			logHeaders[k] = v
 		}
 	}
 
@@ -156,6 +247,42 @@ func HTTPGet(remoteURL string, headers map[string] string, payload map[string]st
 		log.Printf("got error making http request %s",err.Error())
 		return st,""
 	}
+
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		responseHeaders := make(map[string]string)
+
+		for k,v := range resp.Header {
+
+			responseHeaders[k] = strings.Join(v,",")
+
+		}
+
+		var heads,rheads []string
+		for k,v := range logHeaders {
+
+			heads = append(heads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		for k,v := range responseHeaders {
+
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		log.Printf("**** BEGIN HTTP REQUEST ****\n" +
+			"Remote Url : %s\n" +
+			"Request Headers:\n" +
+			"%s\n" +
+			"Request Payload\n" +
+			"\t%s\n" +
+			"Response Status: %d\n" +
+			"Response Headers\n" +
+			"%s\n" +
+			"Response Body\n" +
+			"**** BEGIN HTTP REQUEST ****" +
+			"\t%s",endpoint,strings.Join(heads,"\n"),"",st,strings.Join(rheads,","),string(body))
+	}
+
 
 	return st, string(body)
 }
@@ -191,11 +318,20 @@ func HTTPGetWithContext(ctx context.Context,remoteURL string, headers map[string
 		return 0, ""
 	}
 
+	logHeaders := make(map[string]string)
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	logHeaders["Content-Type"] =  "application/json"
+	logHeaders["Accept"] =  "application/json"
+
 	if headers != nil {
 
 		for k,v := range headers {
 
 			req.Header.Set(k,v)
+			logHeaders[k] = v
 		}
 	}
 
@@ -212,6 +348,41 @@ func HTTPGetWithContext(ctx context.Context,remoteURL string, headers map[string
 
 		log.Printf("got error making http request %s",err.Error())
 		return st,""
+	}
+
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		responseHeaders := make(map[string]string)
+
+		for k,v := range resp.Header {
+
+			responseHeaders[k] = strings.Join(v,",")
+
+		}
+
+		var heads,rheads []string
+		for k,v := range logHeaders {
+
+			heads = append(heads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		for k,v := range responseHeaders {
+
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		log.Printf("**** BEGIN HTTP REQUEST ****\n" +
+			"Remote Url : %s\n" +
+			"Request Headers:\n" +
+			"%s\n" +
+			"Request Payload\n" +
+			"\t%s\n" +
+			"Response Status: %d\n" +
+			"Response Headers\n" +
+			"%s\n" +
+			"Response Body\n" +
+			"**** BEGIN HTTP REQUEST ****" +
+			"\t%s",endpoint,strings.Join(heads,"\n"),"",st,strings.Join(rheads,","),string(body))
 	}
 
 	return st, string(body)
@@ -244,12 +415,15 @@ func HTTPFormPost(endpoint string, headers map[string]string, payload map[string
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
+	logHeaders := make(map[string]string)
+	logHeaders["Content-Type"] =  "application/x-www-form-urlencoded"
+
 	if headers != nil {
 
-		for key, value := range headers {
+		for k,v := range headers {
 
-			req.Header.Add(key, value)
-
+			req.Header.Set(k,v)
+			logHeaders[k] = v
 		}
 	}
 
@@ -268,6 +442,41 @@ func HTTPFormPost(endpoint string, headers map[string]string, payload map[string
 
 		log.Printf("got error making http request %s", err.Error())
 		return st, ""
+	}
+
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		responseHeaders := make(map[string]string)
+
+		for k,v := range resp.Header {
+
+			responseHeaders[k] = strings.Join(v,",")
+
+		}
+
+		var heads,rheads []string
+		for k,v := range logHeaders {
+
+			heads = append(heads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		for k,v := range responseHeaders {
+
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		log.Printf("**** BEGIN HTTP REQUEST ****\n" +
+			"Remote Url : %s\n" +
+			"Request Headers:\n" +
+			"%s\n" +
+			"Request Payload\n" +
+			"\t%s\n" +
+			"Response Status: %d\n" +
+			"Response Headers\n" +
+			"%s\n" +
+			"Response Body\n" +
+			"**** BEGIN HTTP REQUEST ****" +
+			"\t%s",endpoint,strings.Join(heads,"\n"),strings.Join(stringPayload, "&"),st,strings.Join(rheads,","),string(body))
 	}
 
 	return st, string(body)
@@ -300,14 +509,18 @@ func HTTPFormPostWithContext(ctx context.Context,endpoint string, headers map[st
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
+	logHeaders := make(map[string]string)
+	logHeaders["Content-Type"] =  "application/x-www-form-urlencoded"
+
 	if headers != nil {
 
-		for key, value := range headers {
+		for k,v := range headers {
 
-			req.Header.Add(key, value)
-
+			req.Header.Set(k,v)
+			logHeaders[k] = v
 		}
 	}
+
 
 	resp, err := NewNetClient().Do(req)
 	if err != nil {
@@ -324,6 +537,41 @@ func HTTPFormPostWithContext(ctx context.Context,endpoint string, headers map[st
 
 		log.Printf("got error making http request %s", err.Error())
 		return st, ""
+	}
+
+	if os.Getenv("debug") == "1" || os.Getenv("DEBUG") == "1" {
+
+		responseHeaders := make(map[string]string)
+
+		for k,v := range resp.Header {
+
+			responseHeaders[k] = strings.Join(v,",")
+
+		}
+
+		var heads,rheads []string
+		for k,v := range logHeaders {
+
+			heads = append(heads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		for k,v := range responseHeaders {
+
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s",k,v))
+		}
+
+		log.Printf("**** BEGIN HTTP REQUEST ****\n" +
+			"Remote Url : %s\n" +
+			"Request Headers:\n" +
+			"%s\n" +
+			"Request Payload\n" +
+			"\t%s\n" +
+			"Response Status: %d\n" +
+			"Response Headers\n" +
+			"%s\n" +
+			"Response Body\n" +
+			"**** BEGIN HTTP REQUEST ****" +
+			"\t%s",endpoint,strings.Join(heads,"\n"),strings.Join(stringPayload, "&"),st,strings.Join(rheads,","),string(body))
 	}
 
 	return st, string(body)
