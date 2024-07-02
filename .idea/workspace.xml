@@ -40,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" path="$USER_HOME$/go/go1.18" />
+  <component name="GOROOT" url="file://$USER_HOME$/go/go1.22.4" />
   <component name="GoLibraries">
     <option name="indexEntireGoPath" value="false" />
   </component>
@@ -48,10 +48,15 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+        <option name="customMavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+        <option name="mavenHomeTypeForPersistence" value="CUSTOM" />
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
   <component name="ProjectId" id="2SEtas8eN2D2WH3wJvdgGk8KFf9" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -61,21 +66,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="DefaultGoTemplateProperty" value="Go File" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="go.import.settings.migrated" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="project.propCompiler" />
-    <property name="vue.rearranger.settings.migration" value="true" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+    "go.import.settings.migrated": "true",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -85,22 +85,22 @@
     <configuration name="TestLibrary in github.com/mudphilo/go-utils" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="utils" />
       <working_directory value="$PROJECT_DIR$" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/mudphilo/go-utils" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <pattern value="^\QTestLibrary\E$" />
       <method v="2" />
     </configuration>
     <configuration name="go test github.com/mudphilo/go-utils" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="utils" />
       <working_directory value="$PROJECT_DIR$" />
-      <framework value="gotest" />
       <kind value="PACKAGE" />
       <package value="github.com/mudphilo/go-utils" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -109,6 +109,14 @@
         <item itemvalue="Go Test.TestLibrary in github.com/mudphilo/go-utils" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,35 +132,8 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VgoProject">
-    <integration-enabled>true</integration-enabled>
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="440" y="334" key="#GOROOT" timestamp="1710687173999">
-      <screen x="0" y="0" width="1280" height="800" />
-    </state>
-    <state x="440" y="334" key="#GOROOT/0.0.1280.800@0.0.1280.800" timestamp="1710687173999" />
-    <state width="1238" height="205" key="GridCell.Tab.0.bottom" timestamp="1710687600049">
-      <screen x="0" y="0" width="1280" height="800" />
-    </state>
-    <state width="1238" height="205" key="GridCell.Tab.0.bottom/0.0.1280.800@0.0.1280.800" timestamp="1710687600049" />
-    <state width="1238" height="205" key="GridCell.Tab.0.center" timestamp="1710687600047">
-      <screen x="0" y="0" width="1280" height="800" />
-    </state>
-    <state width="1238" height="205" key="GridCell.Tab.0.center/0.0.1280.800@0.0.1280.800" timestamp="1710687600047" />
-    <state width="1238" height="205" key="GridCell.Tab.0.left" timestamp="1710687600038">
-      <screen x="0" y="0" width="1280" height="800" />
-    </state>
-    <state width="1238" height="205" key="GridCell.Tab.0.left/0.0.1280.800@0.0.1280.800" timestamp="1710687600038" />
-    <state width="1238" height="205" key="GridCell.Tab.0.right" timestamp="1710687600048">
-      <screen x="0" y="0" width="1280" height="800" />
-    </state>
-    <state width="1238" height="205" key="GridCell.Tab.0.right/0.0.1280.800@0.0.1280.800" timestamp="1710687600048" />
-    <state x="341" y="155" width="597" height="490" key="find.popup" timestamp="1710687154284">
-      <screen x="0" y="0" width="1280" height="800" />
-    </state>
-    <state x="341" y="155" width="597" height="490" key="find.popup/0.0.1280.800@0.0.1280.800" timestamp="1710687154284" />
+    <settings-migrated>true</settings-migrated>
   </component>
 </project>
