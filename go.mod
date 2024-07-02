@@ -1,5 +1,6 @@
 module github.com/mudphilo/go-utils
 
+
 go 1.22
 
 require (
