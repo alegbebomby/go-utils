@@ -555,7 +555,7 @@ func HTTPFormPostWithContext(ctx context.Context, endpoint string, headers map[s
 
 		for k, v := range responseHeaders {
 
-			rheads = append(rheads, fmt.Sprintf("\t%s : %s\n", k, v))
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s", k, v))
 		}
 
 		log.Printf("**** BEGIN HTTP REQUEST ****\n"+
@@ -569,7 +569,7 @@ func HTTPFormPostWithContext(ctx context.Context, endpoint string, headers map[s
 			"%s\n"+
 			"Response Body\n"+
 			"**** BEGIN HTTP REQUEST ****"+
-			"\t%s", endpoint, strings.Join(heads, "\n"), strings.Join(stringPayload, "&"), st, strings.Join(rheads, ","), string(body))
+			"\t%s", endpoint, strings.Join(heads, "\n"), strings.Join(stringPayload, "&"), st, strings.Join(rheads, "\n"), string(body))
 	}
 
 	return st, string(body)
