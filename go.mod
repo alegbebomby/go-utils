@@ -1,6 +1,6 @@
 module github.com/mudphilo/go-utils
 
-go 1.20
+go 1.22
 
 require (
 	github.com/Pallinder/go-randomdata v1.2.0
