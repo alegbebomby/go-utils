@@ -41,7 +41,7 @@ type ErrorHandler interface {
 }
 
 type ErrDelegator struct {
-	delegate atomic.Value[ErrorHandler]
+	delegate atomic.Pointer[ErrorHandler]
 }
 
 func (d *ErrDelegator) Handle(err error) {
