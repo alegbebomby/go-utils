@@ -565,11 +565,9 @@ func HTTPFormPostWithContext(ctx context.Context, endpoint string, headers map[s
 			"Request Payload\n"+
 			"\t%s\n"+
 			"Response Status: %d\n"+
-			"Response Headers\n"+
-			"%s\n"+
 			"Response Body\n"+
-			"**** BEGIN HTTP REQUEST ****"+
-			"\t%s", endpoint, strings.Join(heads, "\n"), strings.Join(stringPayload, "&"), st, strings.Join(rheads, "\n"), string(body))
+			"**** BEGIN HTTP REQUEST ****\n"+
+			"\t%s", endpoint, strings.Join(heads, "\n"), strings.Join(stringPayload, "&"), st, string(body))
 	}
 
 	return st, string(body)
