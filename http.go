@@ -555,7 +555,7 @@ func HTTPFormPostWithContext(ctx context.Context, endpoint string, headers map[s
 
 		for k, v := range responseHeaders {
 
-			rheads = append(rheads, fmt.Sprintf("\t%s : %s", k, v))
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s\n", k, v))
 		}
 
 		log.Printf("**** BEGIN HTTP REQUEST ****\n"+
