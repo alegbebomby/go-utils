@@ -407,7 +407,7 @@ func logRequest(method, endpoint string, requestHeaders map[string]string, reque
 			"Response Headers\n"+
 			"%s\n"+
 			"Response Body\n"+
-			"**** END HTTP %s REQUEST ***\n*"+
+			"**** END HTTP %s REQUEST ****\n"+
 			"\t%s", strings.ToUpper(method), endpoint, strings.Join(heads, "\n"), body, responseStatus, strings.Join(rheads, "\n"), strings.ToUpper(method), responseBody)
 	}
 
