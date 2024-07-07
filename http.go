@@ -385,7 +385,7 @@ func logRequest(method, endpoint string, requestHeaders map[string]string, reque
 
 		for k, v := range responseHeaders {
 
-			rheads = append(rheads, fmt.Sprintf("\t%s : %s\n", k, v))
+			rheads = append(rheads, fmt.Sprintf("\t%s : %s", k, v))
 		}
 
 		body := "none"
@@ -408,7 +408,7 @@ func logRequest(method, endpoint string, requestHeaders map[string]string, reque
 			"%s\n"+
 			"Response Body\n"+
 			"**** END HTTP %s REQUEST ***\n*"+
-			"\t%s", strings.ToUpper(method), endpoint, strings.Join(heads, "\n"), body, responseStatus, strings.Join(rheads, ","), strings.ToUpper(method), responseBody)
+			"\t%s", strings.ToUpper(method), endpoint, strings.Join(heads, "\n"), body, responseStatus, strings.Join(rheads, "\n"), strings.ToUpper(method), responseBody)
 	}
 
 }
