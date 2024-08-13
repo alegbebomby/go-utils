@@ -22,11 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4f1842f-fd79-4e77-a200-02e401591e04" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pagination.go" beforeDir="false" afterPath="$PROJECT_DIR$/pagination.go" afterDir="false" />
-    </list>
+    <list default="true" id="c4f1842f-fd79-4e77-a200-02e401591e04" name="Default Changelist" comment="Updated the DB to use slave database and also the pagination to use slave database" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -144,6 +140,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <MESSAGE value="Updated the DB to use slave database and also the pagination to use slave database" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated the DB to use slave database and also the pagination to use slave database" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
