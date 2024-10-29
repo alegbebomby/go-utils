@@ -97,7 +97,7 @@ func GetVueTableDataWithContextWithConn(ctx context.Context, db *sql.Conn, pagin
 
 	total := 0
 
-	dbUtil := Db{DB: db, Context: ctx}
+	dbUtil := Db{DBConn: db, Context: ctx}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 
@@ -298,7 +298,7 @@ func DownloadVueTableDataWithContextWithConn(ctx context.Context, db *sql.Conn, 
 
 	total := 0
 
-	dbUtil := Db{DB: db, Context: ctx}
+	dbUtil := Db{DBConn: db, Context: ctx}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 	if isDebug != 0 {
