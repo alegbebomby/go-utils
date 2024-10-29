@@ -139,6 +139,7 @@ func (a *Db) InsertQueryWithContext() (lastInsertID int64, err error) {
 	return lastInsertId, nil
 }
 
+// Deprecated: Use InsertQueryWithContext
 func (a *Db) InsertQuery() (lastInsertID int64, err error) {
 
 	a.Context = context.TODO()
@@ -239,6 +240,7 @@ func (a *Db) UpdateQueryWithContext() (rowsAffected int64, err error) {
 	return rowsaffected, nil
 }
 
+// Deprecated: Use UpdateQueryWithContext
 func (a *Db) UpdateQuery() (rowsAffected int64, err error) {
 
 	a.Context = context.TODO()
@@ -348,6 +350,7 @@ func (a *Db) InsertInTransactionWithContext() (lastInsertID *int64, err error) {
 	return &lastInsertId, nil
 }
 
+// Deprecated: Use InsertInTransactionWithContext
 func (a *Db) InsertInTransaction() (lastInsertID *int64, err error) {
 
 	a.Context = context.TODO()
@@ -401,6 +404,7 @@ func (a *Db) InsertIgnoreWithContext() (lastInsertID *int64, err error) {
 	return &lastInsertId, nil
 }
 
+// Deprecated: Use InsertIgnoreWithContext
 func (a *Db) InsertIgnore() (lastInsertID *int64, err error) {
 
 	a.Context = context.TODO()
@@ -547,6 +551,7 @@ func (a *Db) FetchOneWithContext() *sql.Row {
 	return a.DB.QueryRowContext(a.Context, a.Query, a.Params...)
 }
 
+// Deprecated: Use FetchOneWithContext
 func (a *Db) FetchOne() *sql.Row {
 
 	a.Context = context.TODO()
@@ -668,6 +673,7 @@ func (a *Db) FetchWithContext() (*sql.Rows, error) {
 	return rows, err
 }
 
+// Deprecated: Use FetchWithContext
 func (a *Db) Fetch() (*sql.Rows, error) {
 
 	a.Context = context.TODO()
@@ -789,6 +795,7 @@ func (a *Db) InsertWithContext(tableName string, data map[string]interface{}) (i
 	return a.InsertQueryWithContext()
 }
 
+// Deprecated: Use InsertWithContext
 func (a *Db) Insert(tableName string, data map[string]interface{}) (int64, error) {
 
 	a.Context = context.TODO()
@@ -875,6 +882,7 @@ func (a *Db) UpsertWithContext(tableName string, data map[string]interface{}, up
 	return a.InsertQueryWithContext()
 }
 
+// Deprecated: Use UpsertWithContext
 func (a *Db) Upsert(tableName string, data map[string]interface{}, updates []string) (int64, error) {
 
 	a.Context = context.TODO()
@@ -976,6 +984,7 @@ func (a *Db) UpdateWithContext(tableName string, andCondition, data map[string]i
 	return a.UpdateQueryWithContext()
 }
 
+// Deprecated: Use UpdateWithContext
 func (a *Db) Update(tableName string, andCondition, data map[string]interface{}) (int64, error) {
 
 	a.Context = context.TODO()
@@ -1063,6 +1072,7 @@ func (a *Db) DeleteWithContext(tableName string, andCondition map[string]interfa
 	return a.UpdateQueryWithContext()
 }
 
+// Deprecated: Use DeleteWithContext
 func (a *Db) Delete(tableName string, andCondition map[string]interface{}) (int64, error) {
 
 	a.Context = context.TODO()
@@ -1182,6 +1192,7 @@ func (a *Db) UpsertDataWithContext(tableName string, primaryKey string, data map
 	return a.InsertQueryWithContext()
 }
 
+// Deprecated: Use UpsertDataWithContext
 func (a *Db) UpsertData(tableName string, primaryKey string, data map[string]interface{}, conflicts, updates []string) (int64, error) {
 
 	a.Context = context.TODO()
