@@ -12,7 +12,7 @@ import (
 )
 
 // Deprecated: please use PaginateDataWithContext
-func GetVueTableDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) models.Pagination {
+func GetVueTableDataWithContextWithConn(ctx context.Context, db *sql.Conn, paginator models.Paginator) models.Pagination {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -193,7 +193,7 @@ func GetVueTableDataWithContext(ctx context.Context, db *sql.DB, paginator model
 }
 
 // Deprecated: please use DownloadPaginatedDataWithContext
-func DownloadVueTableDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
+func DownloadVueTableDataWithContextWithConn(ctx context.Context, db *sql.Conn, paginator models.Paginator) (rowData []interface{}, headrs []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
