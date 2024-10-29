@@ -10,14 +10,16 @@ import (
 
 // Db router and DB instance
 type Db struct {
-	DB      *sql.Conn
-	DBSlave *sql.Conn
-	TX      *sql.Tx
-	Query   string
-	Dialect string `default:"mysql"`
-	Params  []interface{}
-	Result  []interface{}
-	Context context.Context
+	DBConn      *sql.Conn
+	DB          *sql.DB
+	DBConnSlave *sql.Conn
+	DBSlave     *sql.DB
+	TX          *sql.Tx
+	Query       string
+	Dialect     string `default:"mysql"`
+	Params      []interface{}
+	Result      []interface{}
+	Context     context.Context
 }
 
 const DbError = "Got error  preparing a.Query %s a.Params %v error %s "
@@ -28,6 +30,20 @@ func (a *Db) StartTransaction() error {
 
 		return fmt.Errorf("transactions are not implemented for %s", a.Dialect)
 
+	}
+
+	if a.DBConn != nil {
+
+		tx, err := a.DBConn.BeginTx(a.Context, nil)
+		if err != nil {
+
+			log.Printf("error starting transaction %s ", err.Error())
+			return err
+		}
+
+		a.TX = tx
+
+		return nil
 	}
 
 	tx, err := a.DB.BeginTx(a.Context, nil)
@@ -83,11 +99,26 @@ func (a *Db) InsertQueryWithContext() (lastInsertID int64, err error) {
 
 	}
 
-	stmt, err := a.DB.PrepareContext(a.Context, a.Query)
-	if err != nil {
+	var stmt *sql.Stmt
 
-		log.Printf(DbError, a.Query, a.Params, err.Error())
-		return 0, err
+	if a.DBConn != nil {
+
+		stmt, err = a.DBConn.PrepareContext(a.Context, a.Query)
+		if err != nil {
+
+			log.Printf(DbError, a.Query, a.Params, err.Error())
+			return 0, err
+		}
+
+	} else {
+
+		stmt, err = a.DB.PrepareContext(a.Context, a.Query)
+		if err != nil {
+
+			log.Printf(DbError, a.Query, a.Params, err.Error())
+			return 0, err
+		}
+
 	}
 
 	defer stmt.Close()
@@ -161,11 +192,26 @@ func (a *Db) InsertQueryWithContextTx() (lastInsertID int64, err error) {
 
 func (a *Db) UpdateQueryWithContext() (rowsAffected int64, err error) {
 
-	stmt, err := a.DB.PrepareContext(a.Context, a.Query)
-	if err != nil {
+	var stmt *sql.Stmt
 
-		log.Printf(DbError, a.Query, a.Params, err.Error())
-		return 0, err
+	if a.DBConn != nil {
+
+		stmt, err = a.DBConn.PrepareContext(a.Context, a.Query)
+		if err != nil {
+
+			log.Printf(DbError, a.Query, a.Params, err.Error())
+			return 0, err
+		}
+
+	} else {
+
+		stmt, err = a.DB.PrepareContext(a.Context, a.Query)
+		if err != nil {
+
+			log.Printf(DbError, a.Query, a.Params, err.Error())
+			return 0, err
+		}
+
 	}
 
 	defer stmt.Close()
@@ -228,13 +274,25 @@ func (a *Db) InsertInTransactionWithContext() (lastInsertID *int64, err error) {
 	if a.TX == nil {
 
 		wasNil = true
-		a.TX, err = a.DB.BeginTx(a.Context, nil)
-		if err != nil {
 
-			log.Printf("Got error starting transaction %s ", err.Error())
-			return nil, err
+		if a.DBConn != nil {
+
+			a.TX, err = a.DBConn.BeginTx(a.Context, nil)
+			if err != nil {
+
+				log.Printf("Got error starting transaction %s ", err.Error())
+				return nil, err
+			}
+
+		} else {
+
+			a.TX, err = a.DB.BeginTx(a.Context, nil)
+			if err != nil {
+
+				log.Printf("Got error starting transaction %s ", err.Error())
+				return nil, err
+			}
 		}
-
 	}
 
 	stmt, err := a.TX.PrepareContext(a.Context, a.Query)
@@ -282,11 +340,26 @@ func (a *Db) InsertIgnoreWithContext() (lastInsertID *int64, err error) {
 
 	}
 
-	stmt, err := a.DB.PrepareContext(a.Context, a.Query)
-	if err != nil {
+	var stmt *sql.Stmt
 
-		log.Printf(DbError, a.Query, a.Params, err.Error())
-		return nil, err
+	if a.DBConn != nil {
+
+		stmt, err = a.DBConn.PrepareContext(a.Context, a.Query)
+		if err != nil {
+
+			log.Printf(DbError, a.Query, a.Params, err.Error())
+			return nil, err
+		}
+
+	} else {
+
+		stmt, err = a.DB.PrepareContext(a.Context, a.Query)
+		if err != nil {
+
+			log.Printf(DbError, a.Query, a.Params, err.Error())
+			return nil, err
+		}
+
 	}
 
 	defer stmt.Close()
@@ -404,12 +477,23 @@ func (a *Db) UpdateInTransactionWithContext() (rowsAffected *int64, err error) {
 
 func (a *Db) FetchOneWithContext() *sql.Row {
 
-	if a.Dialect == "mysql" {
+	if a.Dialect != "postgres" {
 
-		_, err := a.DB.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
-		if err != nil {
+		if a.DBConn != nil {
 
-			log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			_, err := a.DBConn.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
+
+		} else {
+
+			_, err := a.DB.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
 		}
 
 	}
@@ -418,7 +502,19 @@ func (a *Db) FetchOneWithContext() *sql.Row {
 
 	if a.Params == nil || len(a.Params) == 0 {
 
+		if a.DBConn != nil {
+
+			return a.DBConn.QueryRowContext(a.Context, a.Query)
+
+		}
+
 		return a.DB.QueryRowContext(a.Context, a.Query)
+
+	}
+
+	if a.DBConn != nil {
+
+		return a.DBConn.QueryRowContext(a.Context, a.Query, a.Params...)
 
 	}
 
@@ -427,12 +523,23 @@ func (a *Db) FetchOneWithContext() *sql.Row {
 
 func (a *Db) FetchOneSlaveWithContext() *sql.Row {
 
-	if a.Dialect == "mysql" {
+	if a.Dialect != "postgres" {
 
-		_, err := a.DB.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
-		if err != nil {
+		if a.DBConnSlave != nil {
 
-			log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			_, err := a.DBConnSlave.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
+
+		} else {
+
+			_, err := a.DBSlave.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
 		}
 
 	}
@@ -441,7 +548,19 @@ func (a *Db) FetchOneSlaveWithContext() *sql.Row {
 
 	if a.Params == nil || len(a.Params) == 0 {
 
+		if a.DBConnSlave != nil {
+
+			return a.DBConnSlave.QueryRowContext(a.Context, a.Query)
+
+		}
+
 		return a.DBSlave.QueryRowContext(a.Context, a.Query)
+
+	}
+
+	if a.DBConnSlave != nil {
+
+		return a.DBConnSlave.QueryRowContext(a.Context, a.Query, a.Params...)
 
 	}
 
@@ -450,12 +569,23 @@ func (a *Db) FetchOneSlaveWithContext() *sql.Row {
 
 func (a *Db) FetchWithContext() (*sql.Rows, error) {
 
-	if a.Dialect == "mysql" {
+	if a.Dialect != "postgres" {
 
-		_, err := a.DB.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
-		if err != nil {
+		if a.DBConn != nil {
 
-			log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			_, err := a.DBConn.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
+
+		} else {
+
+			_, err := a.DB.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
 		}
 
 	}
@@ -464,10 +594,33 @@ func (a *Db) FetchWithContext() (*sql.Rows, error) {
 
 	if a.Params == nil || len(a.Params) == 0 {
 
+		if a.DBConn != nil {
+
+			rows, err := a.DBConn.QueryContext(a.Context, a.Query)
+			if err != nil {
+
+				log.Printf("error fetching results from database using query %s | no params |  error %s", a.Query, err.Error())
+			}
+
+			return rows, err
+		}
+
 		rows, err := a.DB.QueryContext(a.Context, a.Query)
 		if err != nil {
 
 			log.Printf("error fetching results from database using query %s | no params |  error %s", a.Query, err.Error())
+		}
+
+		return rows, err
+
+	}
+
+	if a.DBConn != nil {
+
+		rows, err := a.DBConn.QueryContext(a.Context, a.Query, a.Params...)
+		if err != nil {
+
+			log.Printf("error fetching results from database using query %s | params %v |  error %s", a.Query, a.Params, err.Error())
 		}
 
 		return rows, err
@@ -485,12 +638,23 @@ func (a *Db) FetchWithContext() (*sql.Rows, error) {
 
 func (a *Db) FetchSlaveWithContext() (*sql.Rows, error) {
 
-	if a.Dialect == "mysql" {
+	if a.Dialect != "postgres" {
 
-		_, err := a.DB.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
-		if err != nil {
+		if a.DBConnSlave != nil {
 
-			log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			_, err := a.DBConnSlave.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
+
+		} else {
+
+			_, err := a.DBSlave.ExecContext(a.Context, "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+			if err != nil {
+
+				log.Printf("error disabling ONLY_FULL_GROUP_BY %s", err.Error())
+			}
 		}
 
 	}
@@ -499,10 +663,34 @@ func (a *Db) FetchSlaveWithContext() (*sql.Rows, error) {
 
 	if a.Params == nil || len(a.Params) == 0 {
 
+		if a.DBConnSlave != nil {
+
+			rows, err := a.DBConnSlave.QueryContext(a.Context, a.Query)
+			if err != nil {
+
+				log.Printf("error fetching results from database using query %s | no params |  error %s", a.Query, err.Error())
+			}
+
+			return rows, err
+
+		}
+
 		rows, err := a.DBSlave.QueryContext(a.Context, a.Query)
 		if err != nil {
 
 			log.Printf("error fetching results from database using query %s | no params |  error %s", a.Query, err.Error())
+		}
+
+		return rows, err
+
+	}
+
+	if a.DBConnSlave != nil {
+
+		rows, err := a.DBConnSlave.QueryContext(a.Context, a.Query, a.Params...)
+		if err != nil {
+
+			log.Printf("error fetching results from database using query %s | params %v |  error %s", a.Query, a.Params, err.Error())
 		}
 
 		return rows, err

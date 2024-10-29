@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func PaginateDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) models.Pagination {
+func PaginateDataWithContextWithDbConn(ctx context.Context, db *sql.Conn, paginator models.Paginator) models.Pagination {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -96,7 +96,7 @@ func PaginateDataWithContext(ctx context.Context, db *sql.DB, paginator models.P
 
 	total := 0
 
-	dbUtil := Db{DB: db, Context: ctx}
+	dbUtil := Db{DBConn: db, Context: ctx}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 
@@ -191,7 +191,7 @@ func PaginateDataWithContext(ctx context.Context, db *sql.DB, paginator models.P
 	return resp
 }
 
-func DownloadPaginatedDataWithContext(ctx context.Context, db *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
+func DownloadPaginatedDataWithContextWithDbConn(ctx context.Context, db *sql.Conn, paginator models.Paginator) (rowData []interface{}, headrs []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -296,7 +296,7 @@ func DownloadPaginatedDataWithContext(ctx context.Context, db *sql.DB, paginator
 
 	total := 0
 
-	dbUtil := Db{DB: db, Context: ctx}
+	dbUtil := Db{DBConn: db, Context: ctx}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 	if isDebug != 0 {
@@ -347,7 +347,7 @@ func DownloadPaginatedDataWithContext(ctx context.Context, db *sql.DB, paginator
 	return rowData, headers
 }
 
-func PaginateDataSlaveWithContext(ctx context.Context, dbSlave *sql.DB, paginator models.Paginator) models.Pagination {
+func PaginateDataSlaveWithContextWithDbConn(ctx context.Context, dbSlave *sql.Conn, paginator models.Paginator) models.Pagination {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -432,7 +432,7 @@ func PaginateDataSlaveWithContext(ctx context.Context, dbSlave *sql.DB, paginato
 
 	total := 0
 
-	dbUtil := Db{DBSlave: dbSlave, Context: ctx}
+	dbUtil := Db{DBConnSlave: dbSlave, Context: ctx}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 
@@ -527,7 +527,7 @@ func PaginateDataSlaveWithContext(ctx context.Context, dbSlave *sql.DB, paginato
 	return resp
 }
 
-func DownloadPaginatedDataSlaveWithContext(ctx context.Context, dbSlave *sql.DB, paginator models.Paginator) (rowData []interface{}, headrs []string) {
+func DownloadPaginatedDataSlaveWithContextWithDbConn(ctx context.Context, dbSlave *sql.Conn, paginator models.Paginator) (rowData []interface{}, headrs []string) {
 
 	search := paginator.VueTable
 	joins := paginator.Joins
@@ -632,7 +632,7 @@ func DownloadPaginatedDataSlaveWithContext(ctx context.Context, dbSlave *sql.DB,
 
 	total := 0
 
-	dbUtil := Db{DBSlave: dbSlave, Context: ctx}
+	dbUtil := Db{DBConnSlave: dbSlave, Context: ctx}
 	dbUtil.SetQuery(countQuery)
 	dbUtil.SetParams(params...)
 	if isDebug != 0 {
