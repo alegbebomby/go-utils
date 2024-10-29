@@ -139,6 +139,13 @@ func (a *Db) InsertQueryWithContext() (lastInsertID int64, err error) {
 	return lastInsertId, nil
 }
 
+func (a *Db) InsertQuery() (lastInsertID int64, err error) {
+
+	a.Context = context.TODO()
+	return a.InsertQueryWithContext()
+
+}
+
 func (a *Db) InsertQueryWithContextTx() (lastInsertID int64, err error) {
 
 	if a.Dialect == "postgres" {
@@ -230,6 +237,13 @@ func (a *Db) UpdateQueryWithContext() (rowsAffected int64, err error) {
 	}
 
 	return rowsaffected, nil
+}
+
+func (a *Db) UpdateQuery() (rowsAffected int64, err error) {
+
+	a.Context = context.TODO()
+	return a.UpdateQueryWithContext()
+
 }
 
 func (a *Db) UpdateQueryWithContextTx() (rowsAffected int64, err error) {
@@ -334,6 +348,12 @@ func (a *Db) InsertInTransactionWithContext() (lastInsertID *int64, err error) {
 	return &lastInsertId, nil
 }
 
+func (a *Db) InsertInTransaction() (lastInsertID *int64, err error) {
+
+	a.Context = context.TODO()
+	return a.InsertInTransactionWithContext()
+}
+
 func (a *Db) InsertIgnoreWithContext() (lastInsertID *int64, err error) {
 
 	if a.Dialect == "postgres" {
@@ -379,6 +399,12 @@ func (a *Db) InsertIgnoreWithContext() (lastInsertID *int64, err error) {
 	}
 
 	return &lastInsertId, nil
+}
+
+func (a *Db) InsertIgnore() (lastInsertID *int64, err error) {
+
+	a.Context = context.TODO()
+	return a.InsertIgnoreWithContext()
 }
 
 func (a *Db) InsertIgnoreWithContextTx() (lastInsertID *int64, err error) {
@@ -521,6 +547,12 @@ func (a *Db) FetchOneWithContext() *sql.Row {
 	return a.DB.QueryRowContext(a.Context, a.Query, a.Params...)
 }
 
+func (a *Db) FetchOne() *sql.Row {
+
+	a.Context = context.TODO()
+	return a.FetchOneWithContext()
+}
+
 func (a *Db) FetchOneSlaveWithContext() *sql.Row {
 
 	if a.Dialect != "postgres" {
@@ -634,6 +666,12 @@ func (a *Db) FetchWithContext() (*sql.Rows, error) {
 	}
 
 	return rows, err
+}
+
+func (a *Db) Fetch() (*sql.Rows, error) {
+
+	a.Context = context.TODO()
+	return a.FetchWithContext()
 }
 
 func (a *Db) FetchSlaveWithContext() (*sql.Rows, error) {
@@ -751,6 +789,12 @@ func (a *Db) InsertWithContext(tableName string, data map[string]interface{}) (i
 	return a.InsertQueryWithContext()
 }
 
+func (a *Db) Insert(tableName string, data map[string]interface{}) (int64, error) {
+
+	a.Context = context.TODO()
+	return a.InsertWithContext(tableName, data)
+}
+
 func (a *Db) InsertWithContextTx(tableName string, data map[string]interface{}) (int64, error) {
 
 	if a.TX == nil {
@@ -829,6 +873,12 @@ func (a *Db) UpsertWithContext(tableName string, data map[string]interface{}, up
 	a.SetQuery(sqlQueryParts)
 	a.SetParams(params...)
 	return a.InsertQueryWithContext()
+}
+
+func (a *Db) Upsert(tableName string, data map[string]interface{}, updates []string) (int64, error) {
+
+	a.Context = context.TODO()
+	return a.UpsertWithContext(tableName, data, updates)
 }
 
 func (a *Db) UpsertWithContextTx(tableName string, data map[string]interface{}, updates []string) (int64, error) {
@@ -926,6 +976,12 @@ func (a *Db) UpdateWithContext(tableName string, andCondition, data map[string]i
 	return a.UpdateQueryWithContext()
 }
 
+func (a *Db) Update(tableName string, andCondition, data map[string]interface{}) (int64, error) {
+
+	a.Context = context.TODO()
+	return a.UpdateWithContext(tableName, andCondition, data)
+}
+
 func (a *Db) UpdateWithContextTx(tableName string, andCondition, data map[string]interface{}) (int64, error) {
 
 	if a.TX == nil {
@@ -1005,6 +1061,12 @@ func (a *Db) DeleteWithContext(tableName string, andCondition map[string]interfa
 	a.SetQuery(sqlQueryParts)
 	a.SetParams(params...)
 	return a.UpdateQueryWithContext()
+}
+
+func (a *Db) Delete(tableName string, andCondition map[string]interface{}) (int64, error) {
+
+	a.Context = context.TODO()
+	return a.DeleteWithContext(tableName, andCondition)
 }
 
 func (a *Db) DeleteWithContextTx(tableName string, andCondition map[string]interface{}) (int64, error) {
@@ -1118,6 +1180,12 @@ func (a *Db) UpsertDataWithContext(tableName string, primaryKey string, data map
 	a.SetQuery(sqlQueryParts)
 	a.SetParams(params...)
 	return a.InsertQueryWithContext()
+}
+
+func (a *Db) UpsertData(tableName string, primaryKey string, data map[string]interface{}, conflicts, updates []string) (int64, error) {
+
+	a.Context = context.TODO()
+	return a.UpsertDataWithContext(tableName, primaryKey, data, conflicts, updates)
 }
 
 func (a *Db) UpsertDataWithContextTx(tableName string, primaryKey string, data map[string]interface{}, conflicts, updates []string) (int64, error) {
