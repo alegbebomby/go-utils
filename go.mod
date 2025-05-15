@@ -1,4 +1,4 @@
-module github.com/mudphilo/go-utils
+module github.com/alegbebomby/go-utils
 
 go 1.21
 
