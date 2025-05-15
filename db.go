@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 )
 
@@ -1309,3 +1310,104 @@ func (a *Db) removeValidParameters() {
 	a.Params = par
 
 }
+
+
+func (a *Db) BatchUpsert(tableName string, dataSlice []map[string]interface{}, updates []string) error {
+    // Return early if no data
+    if len(dataSlice) == 0 {
+        return nil
+    }
+    
+    // Start a transaction
+    tx, err := a.DB.Begin()
+    if err != nil {
+        return fmt.Errorf("failed to begin transaction: %w", err)
+    }
+    
+    // Prepare to rollback on error
+    defer func() {
+        if err != nil {
+            tx.Rollback()
+        }
+    }()
+    
+    // Use first data map to build the query structure (assumes all maps have same keys)
+    firstData := dataSlice[0]
+    var columns []string
+    for column := range firstData {
+        columns = append(columns, column)
+    }
+    
+    // Sort columns for consistent ordering
+    sort.Strings(columns)
+    
+    // Build placeholders for values
+    var allValuePlaceholders []string
+    var allParams []interface{}
+    paramCount := 0
+    
+    for _, data := range dataSlice {
+        var valuePlaceholders []string
+        
+        for _, column := range columns {
+            paramCount++
+            param, ok := data[column]
+            if !ok {
+                // Handle missing values (use NULL or default value)
+                param = nil
+            }
+            
+            allParams = append(allParams, param)
+            
+            if a.Dialect == "postgres" {
+                valuePlaceholders = append(valuePlaceholders, fmt.Sprintf("$%d", paramCount))
+            } else {
+                valuePlaceholders = append(valuePlaceholders, "?")
+            }
+        }
+        
+        allValuePlaceholders = append(allValuePlaceholders, 
+            fmt.Sprintf("(%s)", strings.Join(valuePlaceholders, ",")))
+    }
+    
+    // Build update string if needed
+    updateString := ""
+    if updates != nil {
+        var updatesPart []string
+        for _, f := range updates {
+            updatesPart = append(updatesPart, fmt.Sprintf("%s=VALUES(%s)", f, f))
+        }
+        updateString = fmt.Sprintf("ON DUPLICATE KEY UPDATE %s", strings.Join(updatesPart, ","))
+    }
+    
+    // Complete SQL query
+    sqlQuery := fmt.Sprintf(
+        "INSERT INTO %s (%s) %s %s %s",
+        tableName,
+        strings.Join(columns, ","),
+        a.getValueKeyword(),
+        strings.Join(allValuePlaceholders, ","),
+        updateString,
+    )
+    
+    // Execute the statement
+    stmt, err := tx.Prepare(sqlQuery)
+    if err != nil {
+        return fmt.Errorf("failed to prepare statement: %w", err)
+    }
+    defer stmt.Close()
+    
+    _, err = stmt.Exec(allParams...)
+    if err != nil {
+        return fmt.Errorf("failed to execute batch insert: %w", err)
+    }
+    
+    // Commit the transaction
+    err = tx.Commit()
+    if err != nil {
+        return fmt.Errorf("failed to commit transaction: %w", err)
+    }
+    
+    return nil
+}
+
